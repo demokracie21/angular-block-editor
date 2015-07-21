@@ -5,7 +5,7 @@ angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) 
 
 angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
   $templateCache.put('ng-block-editor/editor.html',
-    '<block-editor-block block="block" ng-repeat="block in blocks" edit="{{ ! ngDisabled }}"></block-editor-block><div class="block-editor-toolbar"><div ng-hide="addingNewBlock"><a href="" ng-click="startAddingNewBlock()" ng-hide="ngDisabled">Add a new block</a></div><div ng-show="addingNewBlock"><a ng-repeat="blockType in blockTypes" href="" class="btn btn-default btn-sm" role="button" ng-click="addNew(blockType.type)"><i class="glyphicon glyphicon-plus"></i> &nbsp;{{ blockType.displayName }}</a> <a href="" ng-click="cancelAddingNewBlock()">Cancel</a></div></div>');
+    '<block-editor-block block="block" ng-repeat="block in blocks" edit="{{ ! ngDisabled }}"></block-editor-block><div class="block-editor-toolbar"><div ng-hide="addingNewBlock"><a href="" ng-click="startAddingNewBlock()" ng-hide="ngDisabled">Add a new block</a></div><div ng-show="addingNewBlock"><a ng-repeat="blockType in ::blockTypes" href="" class="btn btn-default btn-sm" role="button" ng-click="addNew(blockType.type)"><i ng-class="::blockType.icon" ng-show="::blockType.icon"></i> &nbsp;{{ ::blockType.displayName }}</a> <a href="" ng-click="cancelAddingNewBlock()">Cancel</a></div></div>');
 }]);
 
 angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {

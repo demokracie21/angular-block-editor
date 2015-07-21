@@ -60,17 +60,20 @@ angular.module 'ngBlockEditor', ['ngSanitize']
 
 .config (BlockEditorRegistryProvider) ->
     BlockEditorRegistryProvider.registerBlockType 'text',
+        icon: 'glyphicon glyphicon-align-justify'
         displayName: 'Text'
         editTemplate: 'ng-block-editor/edit/text.html'
         previewTemplate: 'ng-block-editor/preview/text.html'
         controller: 'BlockEditorTextController'
 
     BlockEditorRegistryProvider.registerBlockType 'link',
+        icon: 'glyphicon glyphicon-link'
         displayName: 'Link'
         editTemplate: 'ng-block-editor/edit/link.html'
         previewTemplate: 'ng-block-editor/preview/link.html'
 
     BlockEditorRegistryProvider.registerBlockType 'embed',
+        icon: 'glyphicon glyphicon-facetime-video'
         displayName: 'Embed'
         editTemplate: 'ng-block-editor/edit/embed.html'
         previewTemplate: 'ng-block-editor/preview/embed.html'
@@ -104,7 +107,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
                 $scope.blocks.push block
 
             this.editBlock = (block) ->
-                _rollbackStorage[block] = _.cloneDeep block
+                _rollbackStorage[block.$$hashKey] = _.cloneDeep block
                 $scope.blocks[getIdx(block)].editing = yes
 
             this.submitBlockEdit = (block) ->
@@ -120,9 +123,10 @@ angular.module 'ngBlockEditor', ['ngSanitize']
                     this.removeBlock block
                 # Otherwise, rollback to previous state
                 else
-                    rollbackData = _.cloneDeep _rollbackStorage[block]
+                    rollbackData = _.cloneDeep _rollbackStorage[block.$$hashKey]
                     _.merge block, rollbackData
                     delete _rollbackStorage[block]
+                    block.editing = no
 
             this.removeBlock = (block) ->
                 $scope.blocks = _.without $scope.blocks, block
@@ -201,7 +205,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
     }
 
 
-.directive 'blockEditorBlock', ($sce, $log, $controller, BlockEditorRegistry) ->
+.directive 'blockEditorBlock', ($window, $sce, $log, $controller, BlockEditorRegistry) ->
     restrict: 'E'
     templateUrl: 'ng-block-editor/block.html'
     require: '^blockEditor'
@@ -221,7 +225,8 @@ angular.module 'ngBlockEditor', ['ngSanitize']
             blockEditor.editBlock scope.block
 
         scope.remove = ->
-            blockEditor.removeBlock scope.block
+            if $window.confirm 'Are you sure you want to remove this block?'
+                blockEditor.removeBlock scope.block
 
         scope.moveUp = ->
             blockEditor.moveUp scope.block

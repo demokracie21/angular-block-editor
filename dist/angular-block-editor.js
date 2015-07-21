@@ -61,17 +61,20 @@
     return $scope.$watch('block.content.url', _update);
   }).config(function(BlockEditorRegistryProvider) {
     BlockEditorRegistryProvider.registerBlockType('text', {
+      icon: 'glyphicon glyphicon-align-justify',
       displayName: 'Text',
       editTemplate: 'ng-block-editor/edit/text.html',
       previewTemplate: 'ng-block-editor/preview/text.html',
       controller: 'BlockEditorTextController'
     });
     BlockEditorRegistryProvider.registerBlockType('link', {
+      icon: 'glyphicon glyphicon-link',
       displayName: 'Link',
       editTemplate: 'ng-block-editor/edit/link.html',
       previewTemplate: 'ng-block-editor/preview/link.html'
     });
     return BlockEditorRegistryProvider.registerBlockType('embed', {
+      icon: 'glyphicon glyphicon-facetime-video',
       displayName: 'Embed',
       editTemplate: 'ng-block-editor/edit/embed.html',
       previewTemplate: 'ng-block-editor/preview/embed.html',
@@ -105,7 +108,7 @@
           return $scope.blocks.push(block);
         };
         this.editBlock = function(block) {
-          _rollbackStorage[block] = _.cloneDeep(block);
+          _rollbackStorage[block.$$hashKey] = _.cloneDeep(block);
           return $scope.blocks[getIdx(block)].editing = true;
         };
         this.submitBlockEdit = function(block) {
@@ -119,9 +122,10 @@
           if (!block.saved) {
             return this.removeBlock(block);
           } else {
-            rollbackData = _.cloneDeep(_rollbackStorage[block]);
+            rollbackData = _.cloneDeep(_rollbackStorage[block.$$hashKey]);
             _.merge(block, rollbackData);
-            return delete _rollbackStorage[block];
+            delete _rollbackStorage[block];
+            return block.editing = false;
           }
         };
         this.removeBlock = function(block) {
@@ -209,7 +213,7 @@
         }, true);
       }
     };
-  }).directive('blockEditorBlock', function($sce, $log, $controller, BlockEditorRegistry) {
+  }).directive('blockEditorBlock', function($window, $sce, $log, $controller, BlockEditorRegistry) {
     return {
       restrict: 'E',
       templateUrl: 'ng-block-editor/block.html',
@@ -230,7 +234,9 @@
           return blockEditor.editBlock(scope.block);
         };
         scope.remove = function() {
-          return blockEditor.removeBlock(scope.block);
+          if ($window.confirm('Are you sure you want to remove this block?')) {
+            return blockEditor.removeBlock(scope.block);
+          }
         };
         scope.moveUp = function() {
           return blockEditor.moveUp(scope.block);
