@@ -7,7 +7,7 @@ autoprefixer = require 'gulp-autoprefixer'
 cache = require 'gulp-cached'
 coffee = require 'gulp-coffee'
 concat = require 'gulp-concat'
-html2js = require 'gulp-html2js'
+html2js = require 'gulp-ng-html2js'
 htmlmin = require 'gulp-htmlmin'
 less = require 'gulp-less'
 minifyCSS = require 'gulp-minify-css'
@@ -77,9 +77,9 @@ gulp.task 'partials', ->
         .pipe(cache('partials')) # only pass through changed files
         .pipe htmlmin(collapseWhitespace: true)
         .pipe(html2js(
-            outputModuleName: 'ngBlockEditor'
-            useStrict: true
-            base: 'src'
+            moduleName: 'ngBlockEditor'
+            prefix: 'ng-block-editor/'
+            declareModule: no
         ))
         .pipe(remember('partials')) # add back all files to the stream
         .pipe(concat('angular-block-editor.tmpls.js')) # do things that require all files
@@ -107,13 +107,14 @@ gulp.task 'compile-watch', ['compile'], ->
         gulp.start 'compile'
 
 gulp.task 'less', ->
-    gulp.src('src/angular-block-editor.less')
+    gulp.src(lessGlob)
         .pipe(handleErrors())
         # .pipe(sourcemaps.init())
         .pipe(less())
         .pipe autoprefixer(browsers: 'last 2 versions', cascade: true, remove: true)
         .pipe(if config.NODE_ENV == 'production' then minifyCSS() else utils.noop())
         # .pipe(sourcemaps.write())
+        .pipe(concat 'angular-block-editor.css')
         .pipe(gulp.dest("dist"))
 
 

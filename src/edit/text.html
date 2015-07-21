@@ -1,5 +1,5 @@
 <div ng-form="form" class="form-horizontal">
-    <div text-angular ta-toolbar="[['h2','h3'],['bold','italics'],['quote']]" ng-model="block.content.html" required></div>
+    <textarea ng-model="block.content.html" required></textarea>
     <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">
             <a href="" class="btn btn-primary btn-sm" ng-click="save()" ng-disabled="form.$invalid"><i class="glyphicon glyphicon-ok"></i> &nbsp;Done</a>

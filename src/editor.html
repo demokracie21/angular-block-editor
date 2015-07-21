@@ -1,8 +1,7 @@
-<d-block-editor-block block="block" ng-repeat="block in blocks" edit="{{ ! ngDisabled }}"></d-block-editor-block>
+<block-editor-block block="block" ng-repeat="block in blocks" edit="{{ ! ngDisabled }}"></block-editor-block>
 <div class="block-editor-toolbar">
     <div ng-hide="addingNewBlock">
         <a href="" ng-click="startAddingNewBlock()" ng-hide="ngDisabled">Add a new block</a>
-        <span ng-show="blocks && blocks.length > 0">|&nbsp;<a href="" ng-click="renderFullPreview()">Preview</a></span>
     </div>
     <div ng-show="addingNewBlock">
         <a ng-repeat="blockType in blockTypes" href="" class="btn btn-default btn-sm" role="button" ng-click="addNew(blockType.type)"><i class="glyphicon glyphicon-plus"></i> &nbsp;{{ blockType.displayName }}</a>

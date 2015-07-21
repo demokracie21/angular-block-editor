@@ -6,7 +6,11 @@
     "WWuzzy <hynek.urban@fragaria.cz>"
   ],
   "description": "Block-based content editor for AngularJS for consistent and styleable content editing.",
-  "main": "dist/angular-block-editor.js",
+  "main": [
+    "dist/angular-block-editor.js",
+    "dist/angular-block-editor.tmpls.js",
+    "dist/angular-block-editor.css"
+  ],
   "keywords": [
     "content",
     "editor",
@@ -24,7 +28,8 @@
     "tests"
   ],
   "dependencies": {
-    "angular": "~1.3.8",
-    "lodash": "~3.8.0"
+    "angular": "~1.3.17",
+    "lodash": "~3.8.0",
+    "angular-sanitize": "~1.3.17"
   }
 }

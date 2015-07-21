@@ -1,6 +1,4 @@
-'use strict'
-
-angular.module 'ngBlockEditor', []
+angular.module 'ngBlockEditor', ['ngSanitize']
 
 .provider 'BlockEditorRegistry', ->
     blockTypes = {}
@@ -79,15 +77,16 @@ angular.module 'ngBlockEditor', []
         controller: 'BlockEditorEmbedController'
 
 
-.directive 'blockEditor', (BlockEditorRegistryProvider) ->
-    blockTypes = BlockEditorRegistryProvider.getBlockTypes()
+.directive 'blockEditor', (BlockEditorRegistry) ->
+    blockTypes = BlockEditorRegistry.getBlockTypes()
 
     return {
         restrict: 'E'
         templateUrl: 'ng-block-editor/editor.html'
         require: ['blockEditor', 'ngModel']
         scope:
-            ngModel: '=ngModel' # Should be an array of blocks, coming from an external scope.
+            enabledBlockTypes: '=blocks'
+            ngModel: '=ngModel'
             ngDisabled: '='
 
         controller: ($scope) ->
@@ -152,7 +151,6 @@ angular.module 'ngBlockEditor', []
             controller = controllers[0]
             ngModel = controllers[1]
 
-
             _id = "block-editor-#{new Date().getTime()}"
 
             element.addClass 'block-editor'
@@ -173,7 +171,10 @@ angular.module 'ngBlockEditor', []
             ngModel.$isEmpty = (value) ->
                 return _.isArray(value) and value.length > 0
 
-            scope.blockTypes = blockTypes
+            if scope.enabledBlockTypes
+                scope.blockTypes = _.filter blockTypes, (bt) -> bt.type in scope.enabledBlockTypes
+            else
+                scope.blockTypes = blockTypes
 
             scope.startAddingNewBlock = ->
                 scope.addingNewBlock = yes
@@ -200,7 +201,7 @@ angular.module 'ngBlockEditor', []
     }
 
 
-.directive 'blockEditorBlock', ($sce, $controller, BlockEditorRegistry) ->
+.directive 'blockEditorBlock', ($sce, $log, $controller, BlockEditorRegistry) ->
     restrict: 'E'
     templateUrl: 'ng-block-editor/block.html'
     require: '^blockEditor'
@@ -211,6 +212,10 @@ angular.module 'ngBlockEditor', []
         element.addClass 'block-editor-block'
 
         scope.config = BlockEditorRegistry.getBlockTypes()[scope.block.kind]
+
+        if not scope.config
+            $log.error "[ngBlockEditor] Unknown block type: #{scope.block.kind}"
+            return
 
         scope.edit = ->
             blockEditor.editBlock scope.block

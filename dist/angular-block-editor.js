@@ -1,6 +1,7 @@
 (function() {
-  'use strict';
-  angular.module('ngBlockEditor', []).provider('BlockEditorRegistry', function() {
+  var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+
+  angular.module('ngBlockEditor', ['ngSanitize']).provider('BlockEditorRegistry', function() {
     var blockTypes;
     blockTypes = {};
     this.registerBlockType = function(id, config) {
@@ -76,14 +77,15 @@
       previewTemplate: 'ng-block-editor/preview/embed.html',
       controller: 'BlockEditorEmbedController'
     });
-  }).directive('blockEditor', function(BlockEditorRegistryProvider) {
+  }).directive('blockEditor', function(BlockEditorRegistry) {
     var blockTypes;
-    blockTypes = BlockEditorRegistryProvider.getBlockTypes();
+    blockTypes = BlockEditorRegistry.getBlockTypes();
     return {
       restrict: 'E',
       templateUrl: 'ng-block-editor/editor.html',
       require: ['blockEditor', 'ngModel'],
       scope: {
+        enabledBlockTypes: '=blocks',
         ngModel: '=ngModel',
         ngDisabled: '='
       },
@@ -177,7 +179,14 @@
         ngModel.$isEmpty = function(value) {
           return _.isArray(value) && value.length > 0;
         };
-        scope.blockTypes = blockTypes;
+        if (scope.enabledBlockTypes) {
+          scope.blockTypes = _.filter(blockTypes, function(bt) {
+            var ref;
+            return ref = bt.type, indexOf.call(scope.enabledBlockTypes, ref) >= 0;
+          });
+        } else {
+          scope.blockTypes = blockTypes;
+        }
         scope.startAddingNewBlock = function() {
           return scope.addingNewBlock = true;
         };
@@ -200,7 +209,7 @@
         }, true);
       }
     };
-  }).directive('blockEditorBlock', function($sce, $controller, BlockEditorRegistry) {
+  }).directive('blockEditorBlock', function($sce, $log, $controller, BlockEditorRegistry) {
     return {
       restrict: 'E',
       templateUrl: 'ng-block-editor/block.html',
@@ -213,6 +222,10 @@
         var ctrlInstance, ctrlLocals;
         element.addClass('block-editor-block');
         scope.config = BlockEditorRegistry.getBlockTypes()[scope.block.kind];
+        if (!scope.config) {
+          $log.error("[ngBlockEditor] Unknown block type: " + scope.block.kind);
+          return;
+        }
         scope.edit = function() {
           return blockEditor.editBlock(scope.block);
         };
