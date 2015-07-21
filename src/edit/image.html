@@ -1,0 +1,24 @@
+<div ng-form="form" class="form-horizontal">
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <cl-image ng-show="block.content.cloudinary" public-id="{{ block.content.cloudinary.public_id }}" class="thumbnail inline">
+                <cl-transformation height="200" width="200" crop="fit" />
+            </cl-image>
+            <div class="progress" ng-show="inProgress">
+                <div class="progress-bar" role="progressbar" aria-valuenow="{{ progress }}" aria-valuemin="0" aria-valuemax="100" style="width: {{ progress }}%;">
+                    Uploading ...
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <a class="btn btn-default btn-sm" ng-show="! inProgress" ngf-accept="'image/*'" ngf-select ngf-change="upload($files, $rejectedFiles, 'Please select an image.')">
+                <span ng-hide="block.content.cloudinary">Upload image</span>
+                <span ng-show="block.content.cloudinary">Upload a different image</span>
+            </a>
+            <a href="" class="btn btn-primary btn-sm" ng-click="save()" ng-show="block.content.cloudinary"><i class="glyphicon glyphicon-ok"></i> &nbsp;Done</a>
+            <a href="" class="btn btn-link btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i> &nbsp;Cancel</a>
+        </div>
+    </div>
+</div>

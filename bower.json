@@ -1,0 +1,30 @@
+{
+  "name": "angular-block-editor",
+  "version": "0.0.0",
+  "authors": [
+    "xaralis <filip.varecha@fragaria.cz>",
+    "WWuzzy <hynek.urban@fragaria.cz>"
+  ],
+  "description": "Block-based content editor for AngularJS for consistent and styleable content editing.",
+  "main": "dist/angular-block-editor.js",
+  "keywords": [
+    "content",
+    "editor",
+    "html",
+    "angular",
+    "wysiwyg"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/demokracie21/angular-block-editor",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "~1.3.8",
+    "lodash": "~3.8.0"
+  }
+}
