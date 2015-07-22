@@ -95,11 +95,8 @@
         ngDisabled: '='
       },
       controller: function($scope) {
-        var _rollbackStorage, getIdx, updateMovementToggles;
+        var _rollbackStorage, updateMovementToggles;
         _rollbackStorage = {};
-        getIdx = function(block) {
-          return _.indexOf($scope.blocks, block);
-        };
         updateMovementToggles = function() {
           return _.each($scope.blocks, function(b, idx) {
             b.canMoveUp = idx > 0;
@@ -112,21 +109,26 @@
         };
         this.editBlock = function(block) {
           _rollbackStorage[block.$$hashKey] = _.cloneDeep(block);
-          return $scope.blocks[getIdx(block)].editing = true;
+          return block.editing = true;
         };
         this.submitBlockEdit = function(block) {
-          block = $scope.blocks[getIdx(block)];
           block.saved = true;
           return block.editing = false;
         };
         this.rollbackBlockEdit = function(block) {
           var rollbackData;
-          block = $scope.blocks[getIdx(block)];
           if (!block.saved) {
             return this.removeBlock(block);
           } else {
             rollbackData = _.cloneDeep(_rollbackStorage[block.$$hashKey]);
-            _.merge(block, rollbackData);
+            _.forOwn(rollbackData, function(val, key) {
+              return block[key] = val;
+            });
+            _.forOwn(block, function(val, key) {
+              if (!_.has(rollbackData, key)) {
+                return delete block[key];
+              }
+            });
             delete _rollbackStorage[block];
             return block.editing = false;
           }
@@ -138,7 +140,7 @@
         this.moveUp = function(block) {
           var current, index, previous;
           if (block.canMoveUp) {
-            index = getIdx(block);
+            index = _.indexOf($scope.blocks, block);
             if (index > 0) {
               current = $scope.blocks[index];
               previous = $scope.blocks[index - 1];
@@ -150,7 +152,7 @@
         return this.moveDown = function(block) {
           var current, index, next;
           if (block.canMoveDown) {
-            index = getIdx(block);
+            index = _.indexOf($scope.blocks, block);
             if (index < $scope.blocks.length - 1) {
               current = $scope.blocks[index];
               next = $scope.blocks[index + 1];

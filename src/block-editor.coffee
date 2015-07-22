@@ -122,7 +122,12 @@ angular.module 'ngBlockEditor', ['ngSanitize']
                 # Otherwise, rollback to previous state
                 else
                     rollbackData = _.cloneDeep _rollbackStorage[block.$$hashKey]
-                    _.merge block, rollbackData
+                    _.forOwn rollbackData, (val, key) ->
+                        block[key] = val
+                    _.forOwn block, (val, key) ->
+                        if not _.has rollbackData, key
+                            delete block[key]
+
                     delete _rollbackStorage[block]
                     block.editing = no
 
