@@ -65,7 +65,8 @@
       displayName: 'Text',
       editTemplate: 'ng-block-editor/edit/text.html',
       previewTemplate: 'ng-block-editor/preview/text.html',
-      controller: 'BlockEditorTextController'
+      editController: 'BlockEditorTextController',
+      renderController: 'BlockEditorTextController'
     });
     BlockEditorRegistryProvider.registerBlockType('link', {
       icon: 'glyphicon glyphicon-link',
@@ -78,15 +79,16 @@
       displayName: 'Embed',
       editTemplate: 'ng-block-editor/edit/embed.html',
       previewTemplate: 'ng-block-editor/preview/embed.html',
-      controller: 'BlockEditorEmbedController'
+      editController: 'BlockEditorEmbedController',
+      renderController: 'BlockEditorTextController'
     });
-  }).directive('blockEditor', function(BlockEditorRegistry) {
+  }).directive('beEditor', function(BlockEditorRegistry) {
     var blockTypes;
     blockTypes = BlockEditorRegistry.getBlockTypes();
     return {
       restrict: 'E',
       templateUrl: 'ng-block-editor/editor.html',
-      require: ['blockEditor', 'ngModel'],
+      require: ['beEditor', 'ngModel'],
       scope: {
         enabledBlockTypes: '=blocks',
         ngModel: '=ngModel',
@@ -160,8 +162,8 @@
         var _id, controller, ngModel;
         controller = controllers[0];
         ngModel = controllers[1];
-        _id = "block-editor-" + (new Date().getTime());
-        element.addClass('block-editor');
+        _id = "be-editor-" + (new Date().getTime());
+        element.addClass('be-editor');
         element.attr('id', _id);
         ngModel.$formatters.push(function(value) {
           var blocks;
@@ -213,18 +215,18 @@
         }, true);
       }
     };
-  }).directive('blockEditorBlock', function($window, $sce, $log, $controller, BlockEditorRegistry) {
+  }).directive('beBlock', function($window, $log, $controller, BlockEditorRegistry) {
     return {
       restrict: 'E',
       templateUrl: 'ng-block-editor/block.html',
-      require: '^blockEditor',
+      require: '^beEditor',
       scope: {
         block: '=',
         editEnabled: '@edit'
       },
       link: function(scope, element, attrs, blockEditor) {
         var ctrlInstance, ctrlLocals;
-        element.addClass('block-editor-block');
+        element.addClass('be-block');
         scope.config = BlockEditorRegistry.getBlockTypes()[scope.block.kind];
         if (!scope.config) {
           $log.error("[ngBlockEditor] Unknown block type: " + scope.block.kind);
@@ -250,13 +252,49 @@
         scope.cancel = function() {
           return blockEditor.rollbackBlockEdit(scope.block);
         };
-        if (scope.config.controller != null) {
+        if (scope.config.editController != null) {
           ctrlLocals = {
             $scope: scope,
             $block: scope.block,
             $editor: blockEditor
           };
-          return ctrlInstance = $controller(scope.config.controller, ctrlLocals);
+          return ctrlInstance = $controller(scope.config.editController, ctrlLocals);
+        }
+      }
+    };
+  }).directive('beRender', function() {
+    return {
+      restrict: 'EA',
+      template: '<div be-render-block="block" ng-repeat="block in blocks"></div>',
+      scope: {
+        blocks: '=beRender'
+      },
+      link: function(scope, element, attrs) {
+        return element.addClass('be-render');
+      }
+    };
+  }).directive('beRenderBlock', function($controller, BlockEditorRegistry) {
+    return {
+      restrict: 'EA',
+      template: '<div ng-include="config.previewTemplate"></div>',
+      scope: {
+        block: '=beRenderBlock'
+      },
+      replace: true,
+      link: function(scope, element, attrs) {
+        var ctrlInstance, ctrlLocals;
+        element.addClass('be-render-block');
+        scope.config = BlockEditorRegistry.getBlockTypes()[scope.block.kind];
+        if (!scope.config) {
+          $log.error("[ngBlockEditor] Unknown block type: " + scope.block.kind);
+          return;
+        }
+        if (scope.config.renderController != null) {
+          ctrlLocals = {
+            $scope: scope,
+            $block: scope.block
+          };
+          return ctrlInstance = $controller(scope.config.renderController, ctrlLocals);
         }
       }
     };

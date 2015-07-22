@@ -1,5 +1,5 @@
-<block-editor-block block="block" ng-repeat="block in blocks" edit="{{ ! ngDisabled }}"></block-editor-block>
-<div class="block-editor-toolbar">
+<be-block block="block" ng-repeat="block in blocks" edit="{{ ! ngDisabled }}"></be-block>
+<div class="be-toolbar">
     <div ng-hide="addingNewBlock">
         <a href="" ng-click="startAddingNewBlock()" ng-hide="ngDisabled">Add a new block</a>
     </div>

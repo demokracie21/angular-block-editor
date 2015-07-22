@@ -1,17 +1,17 @@
-.block-editor .block-editor-block {
+.be-editor .be-block {
   display: block;
   border-bottom: 1px #ccc solid;
   padding: 10px 0;
 }
-.block-editor .block-editor-block:last-child {
+.be-editor .be-block:last-child {
   border-bottom: 0;
 }
-.block-editor .block-editor-block .block-editor-block-toggles .block-editor-block-toggle-disabled {
+.be-editor .be-block .be-block-toggles .be-block-toggle-disabled {
   opacity: .5;
 }
-.block-editor .block-editor-toolbar {
+.be-editor .be-toolbar {
   padding-top: 20px;
 }
-.block-editor .block-editor-preview .block-editor-block {
+.be-editor .be-preview .be-block {
   border-bottom: 0;
 }

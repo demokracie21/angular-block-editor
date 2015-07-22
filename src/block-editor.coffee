@@ -64,7 +64,8 @@ angular.module 'ngBlockEditor', ['ngSanitize']
         displayName: 'Text'
         editTemplate: 'ng-block-editor/edit/text.html'
         previewTemplate: 'ng-block-editor/preview/text.html'
-        controller: 'BlockEditorTextController'
+        editController: 'BlockEditorTextController'
+        renderController: 'BlockEditorTextController'
 
     BlockEditorRegistryProvider.registerBlockType 'link',
         icon: 'glyphicon glyphicon-link'
@@ -77,16 +78,17 @@ angular.module 'ngBlockEditor', ['ngSanitize']
         displayName: 'Embed'
         editTemplate: 'ng-block-editor/edit/embed.html'
         previewTemplate: 'ng-block-editor/preview/embed.html'
-        controller: 'BlockEditorEmbedController'
+        editController: 'BlockEditorEmbedController'
+        renderController: 'BlockEditorTextController'
 
 
-.directive 'blockEditor', (BlockEditorRegistry) ->
+.directive 'beEditor', (BlockEditorRegistry) ->
     blockTypes = BlockEditorRegistry.getBlockTypes()
 
     return {
         restrict: 'E'
         templateUrl: 'ng-block-editor/editor.html'
-        require: ['blockEditor', 'ngModel']
+        require: ['beEditor', 'ngModel']
         scope:
             enabledBlockTypes: '=blocks'
             ngModel: '=ngModel'
@@ -155,9 +157,9 @@ angular.module 'ngBlockEditor', ['ngSanitize']
             controller = controllers[0]
             ngModel = controllers[1]
 
-            _id = "block-editor-#{new Date().getTime()}"
+            _id = "be-editor-#{new Date().getTime()}"
 
-            element.addClass 'block-editor'
+            element.addClass 'be-editor'
             element.attr 'id', _id
 
             ngModel.$formatters.push (value) ->
@@ -205,15 +207,15 @@ angular.module 'ngBlockEditor', ['ngSanitize']
     }
 
 
-.directive 'blockEditorBlock', ($window, $sce, $log, $controller, BlockEditorRegistry) ->
+.directive 'beBlock', ($window, $log, $controller, BlockEditorRegistry) ->
     restrict: 'E'
     templateUrl: 'ng-block-editor/block.html'
-    require: '^blockEditor'
+    require: '^beEditor'
     scope:
         block: '='
         editEnabled: '@edit'
     link: (scope, element, attrs, blockEditor) ->
-        element.addClass 'block-editor-block'
+        element.addClass 'be-block'
 
         scope.config = BlockEditorRegistry.getBlockTypes()[scope.block.kind]
 
@@ -240,10 +242,40 @@ angular.module 'ngBlockEditor', ['ngSanitize']
         scope.cancel = ->
             blockEditor.rollbackBlockEdit scope.block
 
-        if scope.config.controller?
+        if scope.config.editController?
             ctrlLocals =
                 $scope: scope
                 $block: scope.block
                 $editor: blockEditor
-            ctrlInstance = $controller scope.config.controller, ctrlLocals
+            ctrlInstance = $controller scope.config.editController, ctrlLocals
 
+
+.directive 'beRender', ->
+    restrict: 'EA'
+    template: '<div be-render-block="block" ng-repeat="block in blocks"></div>'
+    scope:
+        blocks: '=beRender'
+    link: (scope, element, attrs) ->
+        element.addClass 'be-render'
+
+
+.directive 'beRenderBlock', ($controller, BlockEditorRegistry) ->
+    restrict: 'EA'
+    template: '<div ng-include="config.previewTemplate"></div>'
+    scope:
+        block: '=beRenderBlock'
+    replace: yes
+    link: (scope, element, attrs) ->
+        element.addClass 'be-render-block'
+
+        scope.config = BlockEditorRegistry.getBlockTypes()[scope.block.kind]
+
+        if not scope.config
+            $log.error "[ngBlockEditor] Unknown block type: #{scope.block.kind}"
+            return
+
+        if scope.config.renderController?
+            ctrlLocals =
+                $scope: scope
+                $block: scope.block
+            ctrlInstance = $controller scope.config.renderController, ctrlLocals
