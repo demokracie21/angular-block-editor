@@ -97,9 +97,6 @@ angular.module 'ngBlockEditor', ['ngSanitize']
         controller: ($scope) ->
             _rollbackStorage = {}
 
-            getIdx = (block) ->
-                return _.indexOf $scope.blocks, block
-
             updateMovementToggles = ->
                 _.each $scope.blocks, (b, idx) ->
                     b.canMoveUp = idx > 0
@@ -111,15 +108,13 @@ angular.module 'ngBlockEditor', ['ngSanitize']
 
             this.editBlock = (block) ->
                 _rollbackStorage[block.$$hashKey] = _.cloneDeep block
-                $scope.blocks[getIdx(block)].editing = yes
+                block.editing = yes
 
             this.submitBlockEdit = (block) ->
-                block = $scope.blocks[getIdx block]
                 block.saved = yes
                 block.editing = no
 
             this.rollbackBlockEdit = (block) ->
-                block = $scope.blocks[getIdx block]
 
                 # If block wasn't previously saved, delete it right away
                 if not block.saved
@@ -137,7 +132,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
 
             this.moveUp = (block) ->
                 if block.canMoveUp
-                    index = getIdx block
+                    index = _.indexOf $scope.blocks, block
 
                     if index > 0
                         current = $scope.blocks[index]
@@ -147,7 +142,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
 
             this.moveDown = (block) ->
                 if block.canMoveDown
-                    index = getIdx block
+                    index = _.indexOf $scope.blocks, block
 
                     if index < $scope.blocks.length - 1
                         current = $scope.blocks[index]
