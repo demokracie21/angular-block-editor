@@ -107,6 +107,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
 
             this.addBlock = (block) ->
                 $scope.blocks.push block
+                updateMovementToggles()
 
             this.editBlock = (block) ->
                 _rollbackStorage[block.$$hashKey] = _.cloneDeep block
@@ -132,6 +133,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
 
             this.removeBlock = (block) ->
                 $scope.blocks = _.without $scope.blocks, block
+                updateMovementToggles()
 
             this.moveUp = (block) ->
                 if block.canMoveUp

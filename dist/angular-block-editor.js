@@ -107,7 +107,8 @@
           });
         };
         this.addBlock = function(block) {
-          return $scope.blocks.push(block);
+          $scope.blocks.push(block);
+          return updateMovementToggles();
         };
         this.editBlock = function(block) {
           _rollbackStorage[block.$$hashKey] = _.cloneDeep(block);
@@ -131,7 +132,8 @@
           }
         };
         this.removeBlock = function(block) {
-          return $scope.blocks = _.without($scope.blocks, block);
+          $scope.blocks = _.without($scope.blocks, block);
+          return updateMovementToggles();
         };
         this.moveUp = function(block) {
           var current, index, previous;
