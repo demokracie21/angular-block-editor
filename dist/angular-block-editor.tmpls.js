@@ -20,7 +20,7 @@ angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) 
 
 angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
   $templateCache.put('ng-block-editor/edit/text.html',
-    '<div ng-form="form" class="form-horizontal"><div class="form-group"><div class="col-sm-12"><textarea ng-model="block.content.html" required></textarea></div></div><div class="form-group"><div class="col-sm-12"><a href="" class="btn btn-primary btn-sm" ng-click="save()" ng-disabled="form.$invalid"><i class="glyphicon glyphicon-ok"></i> &nbsp;Done</a> <a href="" class="btn btn-link btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i> &nbsp;Cancel</a></div></div></div>');
+    '<div ng-form="form" class="form-horizontal"><div class="form-group"><label class="col-sm-2 control-label">Text</label><div class="col-sm-10"><textarea class="form-control" ng-model="block.content.html" required></textarea></div></div><div class="form-group"><div class="col-sm-offset-2 col-sm-10"><a href="" class="btn btn-primary btn-sm" ng-click="save()" ng-disabled="form.$invalid"><i class="glyphicon glyphicon-ok"></i> &nbsp;Done</a> <a href="" class="btn btn-link btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i> &nbsp;Cancel</a></div></div></div>');
 }]);
 
 angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
