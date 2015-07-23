@@ -6,6 +6,9 @@
 .be-editor .be-block:last-child {
   border-bottom: 0;
 }
+.be-editor .be-block .be-block-toggles .btn-group {
+  float: right;
+}
 .be-editor .be-block .be-block-toggles .be-block-toggle-disabled {
   opacity: .5;
 }
