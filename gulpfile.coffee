@@ -6,6 +6,7 @@ path = require 'path'
 autoprefixer = require 'gulp-autoprefixer'
 cache = require 'gulp-cached'
 coffee = require 'gulp-coffee'
+connect = require 'gulp-connect'
 concat = require 'gulp-concat'
 html2js = require 'gulp-ng-html2js'
 htmlmin = require 'gulp-htmlmin'
@@ -122,12 +123,19 @@ gulp.task 'less-watch', ['less'], ->
     gulp.watch lessGlob, (event) ->  # watch the same files in our scripts task
         gulp.start('less')
 
+
 gulp.task 'build-js', ['coffee', 'partials'], ->
     gulp.start 'compile'
 
+
+gulp.task 'connect', ->
+    connect.server
+        root: ['examples', 'bower_components', 'dist']
+
+
 gulp.task 'build', ['build-js', 'less']
 gulp.task 'watch', ['coffee-watch', 'partials-watch', 'compile-watch', 'less-watch']
-gulp.task 'dev', ['watch']
+gulp.task 'dev', ['watch', 'connect']
 gulp.task 'test', ['karma']
 
 gulp.task 'default', ['build']

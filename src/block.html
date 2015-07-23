@@ -4,12 +4,15 @@
     </div>
 </div>
 <div class="row be-block-preview" ng-hide="block.editing">
-    <div class="col-sm-10">
+    <div class="col-sm-1" ng-show="dragAndDropEnabled">
+        <i class="glyphicon glyphicon-menu-hamburger" sv-handle></i>
+    </div>
+    <div ng-class="{'col-sm-10': ! dragAndDropEnabled, 'col-sm-9': dragAndDropEnabled}">
         <div ng-include="config.previewTemplate"></div>
     </div>
     <div class="col-sm-2 be-block-toggles" ng-show="editEnabled != 'false'">
-        <a href="" ng-click="moveUp()" ng-class="{'be-block-toggle-disabled': ! block.canMoveUp}"><i class="glyphicon glyphicon-arrow-up"></i></a>
-        <a href="" ng-click="moveDown()" ng-class="{'be-block-toggle-disabled': ! block.canMoveDown}"><i class="glyphicon glyphicon-arrow-down"></i></a>
+        <a ng-hide="dragAndDropEnabled" href="" ng-click="moveUp()" ng-class="{'be-block-toggle-disabled': ! block.canMoveUp}"><i class="glyphicon glyphicon-arrow-up"></i></a>
+        <a ng-hide="dragAndDropEnabled" href="" ng-click="moveDown()" ng-class="{'be-block-toggle-disabled': ! block.canMoveDown}"><i class="glyphicon glyphicon-arrow-down"></i></a>
         <a href="" ng-click="edit()"><i class="glyphicon glyphicon-pencil"></i></a>
         <a href="" class="text-danger" ng-click="remove()"><i class="glyphicon glyphicon-remove"></i></a>
     </div>

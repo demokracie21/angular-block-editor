@@ -1,19 +1,31 @@
 (function() {
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  angular.module('ngBlockEditor', ['ngSanitize']).provider('BlockEditorRegistry', function() {
-    var blockTypes;
-    blockTypes = {};
+  angular.module('ngBlockEditor', ['ngSanitize']).provider('BlockEditor', function() {
+    var e, self;
+    this.blockTypes = {};
+    this.editorTemplateUrl = 'ng-block-editor/editor.html';
+    this.blockTemplateUrl = 'ng-block-editor/block.html';
+    this.dragAndDropEnabled = false;
+    try {
+      angular.module('angular-sortable-view');
+      this.dragAndDropEnabled = true;
+    } catch (_error) {
+      e = _error;
+      this.dragAndDropEnabled = false;
+    }
     this.registerBlockType = function(id, config) {
       config.type = id;
-      return blockTypes[id] = config;
+      return this.blockTypes[id] = config;
     };
+    self = this;
     this.$get = [
-      function() {
+      '$injector', function($injector) {
         return {
-          getBlockTypes: function() {
-            return blockTypes;
-          }
+          editorTemplateUrl: self.editorTemplateUrl,
+          blockTemplateUrl: self.blockTemplateUrl,
+          blockTypes: self.blockTypes,
+          dragAndDropEnabled: self.dragAndDropEnabled
         };
       }
     ];
@@ -59,8 +71,8 @@
       return _update();
     });
     return $scope.$watch('block.content.url', _update);
-  }).config(function(BlockEditorRegistryProvider) {
-    BlockEditorRegistryProvider.registerBlockType('text', {
+  }).config(function(BlockEditorProvider) {
+    BlockEditorProvider.registerBlockType('text', {
       icon: 'glyphicon glyphicon-align-justify',
       displayName: 'Text',
       editTemplate: 'ng-block-editor/edit/text.html',
@@ -68,13 +80,13 @@
       editController: 'BlockEditorTextController',
       renderController: 'BlockEditorTextController'
     });
-    BlockEditorRegistryProvider.registerBlockType('link', {
+    BlockEditorProvider.registerBlockType('link', {
       icon: 'glyphicon glyphicon-link',
       displayName: 'Link',
       editTemplate: 'ng-block-editor/edit/link.html',
       previewTemplate: 'ng-block-editor/preview/link.html'
     });
-    return BlockEditorRegistryProvider.registerBlockType('embed', {
+    return BlockEditorProvider.registerBlockType('embed', {
       icon: 'glyphicon glyphicon-facetime-video',
       displayName: 'Embed',
       editTemplate: 'ng-block-editor/edit/embed.html',
@@ -82,12 +94,12 @@
       editController: 'BlockEditorEmbedController',
       renderController: 'BlockEditorTextController'
     });
-  }).directive('beEditor', function(BlockEditorRegistry) {
+  }).directive('beEditor', function(BlockEditor) {
     var blockTypes;
-    blockTypes = BlockEditorRegistry.getBlockTypes();
+    blockTypes = BlockEditor.blockTypes;
     return {
       restrict: 'E',
-      templateUrl: 'ng-block-editor/editor.html',
+      templateUrl: BlockEditor.editorTemplateUrl,
       require: ['beEditor', 'ngModel'],
       scope: {
         enabledBlockTypes: '=blocks',
@@ -197,6 +209,7 @@
         } else {
           scope.blockTypes = blockTypes;
         }
+        scope.dragAndDropEnabled = BlockEditor.dragAndDropEnabled;
         scope.startAddingNewBlock = function() {
           return scope.addingNewBlock = true;
         };
@@ -219,7 +232,7 @@
         }, true);
       }
     };
-  }).directive('beBlock', function($window, $log, $controller, BlockEditorRegistry) {
+  }).directive('beBlock', function($window, $log, $controller, BlockEditor) {
     return {
       restrict: 'E',
       templateUrl: 'ng-block-editor/block.html',
@@ -231,7 +244,8 @@
       link: function(scope, element, attrs, blockEditor) {
         var ctrlInstance, ctrlLocals;
         element.addClass('be-block');
-        scope.config = BlockEditorRegistry.getBlockTypes()[scope.block.kind];
+        scope.dragAndDropEnabled = BlockEditor.dragAndDropEnabled;
+        scope.config = BlockEditor.blockTypes[scope.block.kind];
         if (!scope.config) {
           $log.error("[ngBlockEditor] Unknown block type: " + scope.block.kind);
           return;
@@ -277,7 +291,7 @@
         return element.addClass('be-render');
       }
     };
-  }).directive('beRenderBlock', function($controller, BlockEditorRegistry) {
+  }).directive('beRenderBlock', function($controller, BlockEditor) {
     return {
       restrict: 'EA',
       template: '<div ng-include="config.previewTemplate"></div>',
@@ -288,7 +302,7 @@
       link: function(scope, element, attrs) {
         var ctrlInstance, ctrlLocals;
         element.addClass('be-render-block');
-        scope.config = BlockEditorRegistry.getBlockTypes()[scope.block.kind];
+        scope.config = BlockEditor.blockTypes[scope.block.kind];
         if (!scope.config) {
           $log.error("[ngBlockEditor] Unknown block type: " + scope.block.kind);
           return;

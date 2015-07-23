@@ -1,16 +1,29 @@
 angular.module 'ngBlockEditor', ['ngSanitize']
 
-.provider 'BlockEditorRegistry', ->
-    blockTypes = {}
+.provider 'BlockEditor', ->
+    @blockTypes = {}
+    @editorTemplateUrl = 'ng-block-editor/editor.html'
+    @blockTemplateUrl = 'ng-block-editor/block.html'
+    @dragAndDropEnabled = no
+
+    try
+        angular.module 'angular-sortable-view'
+        @dragAndDropEnabled = yes
+    catch e
+        @dragAndDropEnabled = no
 
     @registerBlockType = (id, config) ->
         config.type = id
-        blockTypes[id] = config
+        @blockTypes[id] = config
 
-    @$get = [() ->
+    self = @
+
+    @$get = ['$injector', ($injector) ->
         return {
-            getBlockTypes: ->
-                return blockTypes
+            editorTemplateUrl: self.editorTemplateUrl
+            blockTemplateUrl: self.blockTemplateUrl
+            blockTypes: self.blockTypes
+            dragAndDropEnabled: self.dragAndDropEnabled
         }
     ]
 
@@ -58,8 +71,8 @@ angular.module 'ngBlockEditor', ['ngSanitize']
     $scope.$watch 'block.content.url', _update
 
 
-.config (BlockEditorRegistryProvider) ->
-    BlockEditorRegistryProvider.registerBlockType 'text',
+.config (BlockEditorProvider) ->
+    BlockEditorProvider.registerBlockType 'text',
         icon: 'glyphicon glyphicon-align-justify'
         displayName: 'Text'
         editTemplate: 'ng-block-editor/edit/text.html'
@@ -67,13 +80,13 @@ angular.module 'ngBlockEditor', ['ngSanitize']
         editController: 'BlockEditorTextController'
         renderController: 'BlockEditorTextController'
 
-    BlockEditorRegistryProvider.registerBlockType 'link',
+    BlockEditorProvider.registerBlockType 'link',
         icon: 'glyphicon glyphicon-link'
         displayName: 'Link'
         editTemplate: 'ng-block-editor/edit/link.html'
         previewTemplate: 'ng-block-editor/preview/link.html'
 
-    BlockEditorRegistryProvider.registerBlockType 'embed',
+    BlockEditorProvider.registerBlockType 'embed',
         icon: 'glyphicon glyphicon-facetime-video'
         displayName: 'Embed'
         editTemplate: 'ng-block-editor/edit/embed.html'
@@ -82,12 +95,12 @@ angular.module 'ngBlockEditor', ['ngSanitize']
         renderController: 'BlockEditorTextController'
 
 
-.directive 'beEditor', (BlockEditorRegistry) ->
-    blockTypes = BlockEditorRegistry.getBlockTypes()
+.directive 'beEditor', (BlockEditor) ->
+    blockTypes = BlockEditor.blockTypes
 
     return {
         restrict: 'E'
-        templateUrl: 'ng-block-editor/editor.html'
+        templateUrl: BlockEditor.editorTemplateUrl
         require: ['beEditor', 'ngModel']
         scope:
             enabledBlockTypes: '=blocks'
@@ -184,6 +197,8 @@ angular.module 'ngBlockEditor', ['ngSanitize']
             else
                 scope.blockTypes = blockTypes
 
+            scope.dragAndDropEnabled = BlockEditor.dragAndDropEnabled
+
             scope.startAddingNewBlock = ->
                 scope.addingNewBlock = yes
 
@@ -209,7 +224,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
     }
 
 
-.directive 'beBlock', ($window, $log, $controller, BlockEditorRegistry) ->
+.directive 'beBlock', ($window, $log, $controller, BlockEditor) ->
     restrict: 'E'
     templateUrl: 'ng-block-editor/block.html'
     require: '^beEditor'
@@ -219,7 +234,8 @@ angular.module 'ngBlockEditor', ['ngSanitize']
     link: (scope, element, attrs, blockEditor) ->
         element.addClass 'be-block'
 
-        scope.config = BlockEditorRegistry.getBlockTypes()[scope.block.kind]
+        scope.dragAndDropEnabled = BlockEditor.dragAndDropEnabled
+        scope.config = BlockEditor.blockTypes[scope.block.kind]
 
         if not scope.config
             $log.error "[ngBlockEditor] Unknown block type: #{scope.block.kind}"
@@ -261,7 +277,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
         element.addClass 'be-render'
 
 
-.directive 'beRenderBlock', ($controller, BlockEditorRegistry) ->
+.directive 'beRenderBlock', ($controller, BlockEditor) ->
     restrict: 'EA'
     template: '<div ng-include="config.previewTemplate"></div>'
     scope:
@@ -270,7 +286,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
     link: (scope, element, attrs) ->
         element.addClass 'be-render-block'
 
-        scope.config = BlockEditorRegistry.getBlockTypes()[scope.block.kind]
+        scope.config = BlockEditor.blockTypes[scope.block.kind]
 
         if not scope.config
             $log.error "[ngBlockEditor] Unknown block type: #{scope.block.kind}"

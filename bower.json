@@ -25,11 +25,16 @@
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "examples"
   ],
   "dependencies": {
     "angular": "~1.3.17",
     "lodash": "~3.10.0",
     "angular-sanitize": "~1.3.17"
+  },
+  "devDependencies": {
+    "bootstrap": "~3.3.5",
+    "angular-sortable-view": "~0.0.13"
   }
 }
