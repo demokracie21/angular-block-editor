@@ -178,7 +178,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
             element.attr 'id', _id
 
             ngModel.$formatters.push (value) ->
-                blocks = angular.copy value
+                blocks = angular.copy(value or [])
                 _.each blocks, (block, idx) ->
                     block.saved = yes
                     block.canMoveUp = idx > 0

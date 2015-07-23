@@ -183,7 +183,7 @@
         element.attr('id', _id);
         ngModel.$formatters.push(function(value) {
           var blocks;
-          blocks = angular.copy(value);
+          blocks = angular.copy(value || []);
           _.each(blocks, function(block, idx) {
             block.saved = true;
             block.canMoveUp = idx > 0;
