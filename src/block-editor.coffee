@@ -231,7 +231,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
 
 .directive 'beBlock', ($window, $log, $controller, BlockEditor) ->
     restrict: 'E'
-    templateUrl: 'ng-block-editor/block.html'
+    templateUrl: BlockEditor.blockTemplateUrl
     require: '^beEditor'
     scope:
         block: '='

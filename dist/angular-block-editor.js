@@ -239,7 +239,7 @@
   }).directive('beBlock', function($window, $log, $controller, BlockEditor) {
     return {
       restrict: 'E',
-      templateUrl: 'ng-block-editor/block.html',
+      templateUrl: BlockEditor.blockTemplateUrl,
       require: '^beEditor',
       scope: {
         block: '=',
