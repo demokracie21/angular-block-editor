@@ -5,6 +5,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
     @editorTemplateUrl = 'ng-block-editor/editor.html'
     @blockTemplateUrl = 'ng-block-editor/block.html'
     @dragAndDropEnabled = no
+    @toolbar = []
 
     try
         angular.module 'angular-sortable-view'
@@ -24,6 +25,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
             blockTemplateUrl: self.blockTemplateUrl
             blockTypes: self.blockTypes
             dragAndDropEnabled: self.dragAndDropEnabled
+            toolbar: self.toolbar
         }
     ]
 
@@ -94,16 +96,18 @@ angular.module 'ngBlockEditor', ['ngSanitize']
         editController: 'BlockEditorEmbedController'
         renderController: 'BlockEditorTextController'
 
+    BlockEditorProvider.toolbar = ['text', 'link', 'embed']
+
 
 .directive 'beEditor', (BlockEditor) ->
-    blockTypes = BlockEditor.blockTypes
+    allBlockTypes = BlockEditor.blockTypes
 
     return {
         restrict: 'E'
         templateUrl: BlockEditor.editorTemplateUrl
         require: ['beEditor', 'ngModel']
         scope:
-            enabledBlockTypes: '=blocks'
+            toolbar: '='
             ngModel: '=ngModel'
             ngDisabled: '='
 
@@ -192,10 +196,11 @@ angular.module 'ngBlockEditor', ['ngSanitize']
             ngModel.$isEmpty = (value) ->
                 return _.isArray(value) and value.length > 0
 
-            if scope.enabledBlockTypes
-                scope.blockTypes = _.filter blockTypes, (bt) -> bt.type in scope.enabledBlockTypes
-            else
-                scope.blockTypes = blockTypes
+            _toolbar = scope.toolbar or BlockEditor.toolbar
+            scope.blockTypes = _(allBlockTypes)
+                .filter (bt) -> -> bt.type in _toolbar
+                .sortBy (bt) -> _.indexOf _toolbar, bt.type
+                .value()
 
             scope.dragAndDropEnabled = BlockEditor.dragAndDropEnabled
 

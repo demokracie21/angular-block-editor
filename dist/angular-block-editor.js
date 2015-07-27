@@ -7,6 +7,7 @@
     this.editorTemplateUrl = 'ng-block-editor/editor.html';
     this.blockTemplateUrl = 'ng-block-editor/block.html';
     this.dragAndDropEnabled = false;
+    this.toolbar = [];
     try {
       angular.module('angular-sortable-view');
       this.dragAndDropEnabled = true;
@@ -25,7 +26,8 @@
           editorTemplateUrl: self.editorTemplateUrl,
           blockTemplateUrl: self.blockTemplateUrl,
           blockTypes: self.blockTypes,
-          dragAndDropEnabled: self.dragAndDropEnabled
+          dragAndDropEnabled: self.dragAndDropEnabled,
+          toolbar: self.toolbar
         };
       }
     ];
@@ -86,7 +88,7 @@
       editTemplate: 'ng-block-editor/edit/link.html',
       previewTemplate: 'ng-block-editor/preview/link.html'
     });
-    return BlockEditorProvider.registerBlockType('embed', {
+    BlockEditorProvider.registerBlockType('embed', {
       icon: 'glyphicon glyphicon-facetime-video',
       displayName: 'Embed',
       editTemplate: 'ng-block-editor/edit/embed.html',
@@ -94,15 +96,16 @@
       editController: 'BlockEditorEmbedController',
       renderController: 'BlockEditorTextController'
     });
+    return BlockEditorProvider.toolbar = ['text', 'link', 'embed'];
   }).directive('beEditor', function(BlockEditor) {
-    var blockTypes;
-    blockTypes = BlockEditor.blockTypes;
+    var allBlockTypes;
+    allBlockTypes = BlockEditor.blockTypes;
     return {
       restrict: 'E',
       templateUrl: BlockEditor.editorTemplateUrl,
       require: ['beEditor', 'ngModel'],
       scope: {
-        enabledBlockTypes: '=blocks',
+        toolbar: '=',
         ngModel: '=ngModel',
         ngDisabled: '='
       },
@@ -175,7 +178,7 @@
         };
       },
       link: function(scope, element, attrs, controllers) {
-        var _id, controller, ngModel;
+        var _id, _toolbar, controller, ngModel;
         controller = controllers[0];
         ngModel = controllers[1];
         _id = "be-editor-" + (new Date().getTime());
@@ -201,14 +204,15 @@
         ngModel.$isEmpty = function(value) {
           return _.isArray(value) && value.length > 0;
         };
-        if (scope.enabledBlockTypes) {
-          scope.blockTypes = _.filter(blockTypes, function(bt) {
+        _toolbar = scope.toolbar || BlockEditor.toolbar;
+        scope.blockTypes = _(allBlockTypes).filter(function(bt) {
+          return function() {
             var ref;
-            return ref = bt.type, indexOf.call(scope.enabledBlockTypes, ref) >= 0;
-          });
-        } else {
-          scope.blockTypes = blockTypes;
-        }
+            return ref = bt.type, indexOf.call(_toolbar, ref) >= 0;
+          };
+        }).sortBy(function(bt) {
+          return _.indexOf(_toolbar, bt.type);
+        }).value();
         scope.dragAndDropEnabled = BlockEditor.dragAndDropEnabled;
         scope.startAddingNewBlock = function() {
           return scope.addingNewBlock = true;
