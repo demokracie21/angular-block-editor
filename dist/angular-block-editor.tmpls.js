@@ -45,5 +45,5 @@ angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) 
 
 angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
   $templateCache.put('ng-block-editor/preview/embed/youtube.html',
-    '<iframe width="420" height="315" src="{{ trustedConcat(\'http://www.youtube.com/embed/\', contentId) }}"></iframe>');
+    '<iframe width="100%" height="450" src="{{ trustedConcat(\'http://www.youtube.com/embed/\', contentId) }}"></iframe>');
 }]);
