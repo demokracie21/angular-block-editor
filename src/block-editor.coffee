@@ -6,6 +6,8 @@ angular.module 'ngBlockEditor', ['ngSanitize']
     @blockTemplateUrl = 'ng-block-editor/block.html'
     @dragAndDropEnabled = no
     @toolbar = []
+    @messages =
+        removeBlockConfirm: 'Are you sure you want to remove this block?'
 
     try
         angular.module 'angular-sortable-view'
@@ -19,13 +21,22 @@ angular.module 'ngBlockEditor', ['ngSanitize']
 
     self = @
 
-    @$get = ['$injector', ($injector) ->
+    @$get = ['$injector', '$log', ($injector, $log) ->
         return {
             editorTemplateUrl: self.editorTemplateUrl
             blockTemplateUrl: self.blockTemplateUrl
             blockTypes: self.blockTypes
             dragAndDropEnabled: self.dragAndDropEnabled
-            toolbar: self.toolbar
+            toolbar: self.toolbar,
+            getMessage: (_id, editor, block) ->
+                if not self.messages[_id]?
+                    $log.error '[ngBlockEditor] No message with _id ' + _id
+
+                # DI enabled function
+                if _.isFunction(self.messages[_id]) or _.isArray(self.messages[_id])
+                    return $injector.invoke(self.messages[_id], {$editor: editor, $block: block})
+
+                return self.messages[_id]
         }
     ]
 
@@ -251,7 +262,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
             blockEditor.editBlock scope.block
 
         scope.remove = ->
-            if $window.confirm 'Are you sure you want to remove this block?'
+            if $window.confirm BlockEditor.getMessage('removeBlockConfirm', blockEditor, scope.block)
                 blockEditor.removeBlock scope.block
 
         scope.moveUp = ->

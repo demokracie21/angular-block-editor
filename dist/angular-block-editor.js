@@ -8,6 +8,9 @@
     this.blockTemplateUrl = 'ng-block-editor/block.html';
     this.dragAndDropEnabled = false;
     this.toolbar = [];
+    this.messages = {
+      removeBlockConfirm: 'Are you sure you want to remove this block?'
+    };
     try {
       angular.module('angular-sortable-view');
       this.dragAndDropEnabled = true;
@@ -21,13 +24,25 @@
     };
     self = this;
     this.$get = [
-      '$injector', function($injector) {
+      '$injector', '$log', function($injector, $log) {
         return {
           editorTemplateUrl: self.editorTemplateUrl,
           blockTemplateUrl: self.blockTemplateUrl,
           blockTypes: self.blockTypes,
           dragAndDropEnabled: self.dragAndDropEnabled,
-          toolbar: self.toolbar
+          toolbar: self.toolbar,
+          getMessage: function(_id, editor, block) {
+            if (self.messages[_id] == null) {
+              $log.error('[ngBlockEditor] No message with _id ' + _id);
+            }
+            if (_.isFunction(self.messages[_id]) || _.isArray(self.messages[_id])) {
+              return $injector.invoke(self.messages[_id], {
+                $editor: editor,
+                $block: block
+              });
+            }
+            return self.messages[_id];
+          }
         };
       }
     ];
@@ -258,7 +273,7 @@
           return blockEditor.editBlock(scope.block);
         };
         scope.remove = function() {
-          if ($window.confirm('Are you sure you want to remove this block?')) {
+          if ($window.confirm(BlockEditor.getMessage('removeBlockConfirm', blockEditor, scope.block))) {
             return blockEditor.removeBlock(scope.block);
           }
         };
