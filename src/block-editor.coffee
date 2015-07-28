@@ -56,13 +56,14 @@ angular.module 'ngBlockEditor', ['ngSanitize']
         args = Array.prototype.slice.call arguments
         return $sce.trustAsResourceUrl(args.join '')
 
-    _update = ->
+    _update = _.debounce ->
         if $scope.pattern? and $block.content?.url?
             $scope.contentId = $scope.pattern.exec($block.content.url)[1]
             $scope.isValid = $scope.pattern.test($block.content.url)
         else
             $scope.contentId = undefined
             $scope.isValid = no
+    , 1000
 
     $scope.$watch 'block.content.provider', (provider) ->
         if provider

@@ -54,7 +54,7 @@
       args = Array.prototype.slice.call(arguments);
       return $sce.trustAsResourceUrl(args.join(''));
     };
-    _update = function() {
+    _update = _.debounce(function() {
       var ref;
       if (($scope.pattern != null) && (((ref = $block.content) != null ? ref.url : void 0) != null)) {
         $scope.contentId = $scope.pattern.exec($block.content.url)[1];
@@ -63,7 +63,7 @@
         $scope.contentId = void 0;
         return $scope.isValid = false;
       }
-    };
+    }, 1000);
     $scope.$watch('block.content.provider', function(provider) {
       if (provider) {
         $scope.pattern = _.findWhere($scope.embeddables, {
