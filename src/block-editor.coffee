@@ -301,7 +301,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
         element.addClass 'be-render'
 
 
-.directive 'beRenderBlock', ($controller, BlockEditor) ->
+.directive 'beRenderBlock', ($log, $controller, BlockEditor) ->
     restrict: 'EA'
     template: '<div ng-include="config.previewTemplate"></div>'
     scope:

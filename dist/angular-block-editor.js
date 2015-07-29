@@ -316,7 +316,7 @@
         return element.addClass('be-render');
       }
     };
-  }).directive('beRenderBlock', function($controller, BlockEditor) {
+  }).directive('beRenderBlock', function($log, $controller, BlockEditor) {
     return {
       restrict: 'EA',
       template: '<div ng-include="config.previewTemplate"></div>',
