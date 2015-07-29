@@ -179,7 +179,7 @@
             }
           }
         };
-        return this.moveDown = function(block) {
+        this.moveDown = function(block) {
           var current, index, next;
           if (block.canMoveDown) {
             index = _.indexOf($scope.blocks, block);
@@ -191,6 +191,9 @@
             }
           }
         };
+        return this.isEditing = function() {
+          return $scope.editing;
+        };
       },
       link: function(scope, element, attrs, controllers) {
         var _id, _toolbar, controller, ngModel;
@@ -199,6 +202,7 @@
         _id = "be-editor-" + (new Date().getTime());
         element.addClass('be-editor');
         element.attr('id', _id);
+        scope.editing = false;
         ngModel.$formatters.push(function(value) {
           var blocks;
           blocks = angular.copy(value || []);
@@ -247,7 +251,9 @@
           return scope.addingNewBlock = false;
         };
         return scope.$watch('blocks', function(value) {
-          return ngModel.$setViewValue(_.cloneDeep(value));
+          ngModel.$setViewValue(_.cloneDeep(value));
+          scope.editing = _(value).chain().map('editing').some().value();
+          return element.toggleClass('be-editor-editing', scope.editing);
         }, true);
       }
     };
@@ -263,7 +269,7 @@
       link: function(scope, element, attrs, blockEditor) {
         var ctrlInstance, ctrlLocals;
         element.addClass('be-block');
-        scope.dragAndDropEnabled = BlockEditor.dragAndDropEnabled;
+        scope.$editor = blockEditor;
         scope.config = BlockEditor.blockTypes[scope.block.kind];
         if (!scope.config) {
           $log.error("[ngBlockEditor] Unknown block type: " + scope.block.kind);

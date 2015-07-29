@@ -184,6 +184,9 @@ angular.module 'ngBlockEditor', ['ngSanitize']
                         $scope.blocks.splice(index, 2, next, current)
                         updateMovementToggles()
 
+            this.isEditing = ->
+                return $scope.editing
+
         link: (scope, element, attrs, controllers) ->
             controller = controllers[0]
             ngModel = controllers[1]
@@ -192,6 +195,8 @@ angular.module 'ngBlockEditor', ['ngSanitize']
 
             element.addClass 'be-editor'
             element.attr 'id', _id
+
+            scope.editing = no
 
             ngModel.$formatters.push (value) ->
                 blocks = angular.copy(value or [])
@@ -236,6 +241,8 @@ angular.module 'ngBlockEditor', ['ngSanitize']
 
             scope.$watch 'blocks', (value) ->
                 ngModel.$setViewValue _.cloneDeep value
+                scope.editing = _(value).chain().map('editing').some().value()
+                element.toggleClass 'be-editor-editing', scope.editing
             , true
 
     }
@@ -251,7 +258,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
     link: (scope, element, attrs, blockEditor) ->
         element.addClass 'be-block'
 
-        scope.dragAndDropEnabled = BlockEditor.dragAndDropEnabled
+        scope.$editor = blockEditor
         scope.config = BlockEditor.blockTypes[scope.block.kind]
 
         if not scope.config
