@@ -115,7 +115,7 @@
       editTemplate: 'ng-block-editor/edit/embed.html',
       previewTemplate: 'ng-block-editor/preview/embed.html',
       editController: 'BlockEditorEmbedController',
-      renderController: 'BlockEditorTextController'
+      renderController: 'BlockEditorEmbedController'
     });
     return BlockEditorProvider.toolbar = ['text', 'link', 'embed'];
   }).directive('beEditor', function(BlockEditor) {
@@ -339,6 +339,7 @@
           return;
         }
         if (scope.config.renderController != null) {
+          console.log(scope.config.renderController);
           ctrlLocals = {
             $scope: scope,
             $block: scope.block

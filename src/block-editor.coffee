@@ -108,7 +108,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
         editTemplate: 'ng-block-editor/edit/embed.html'
         previewTemplate: 'ng-block-editor/preview/embed.html'
         editController: 'BlockEditorEmbedController'
-        renderController: 'BlockEditorTextController'
+        renderController: 'BlockEditorEmbedController'
 
     BlockEditorProvider.toolbar = ['text', 'link', 'embed']
 
@@ -319,6 +319,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
             return
 
         if scope.config.renderController?
+            console.log scope.config.renderController
             ctrlLocals =
                 $scope: scope
                 $block: scope.block
