@@ -47,12 +47,12 @@ angular.module 'ngBlockEditor', ['ngSanitize']
     $scope.trustedHtmlCode = $sce.trustAsHtml
 
 
-.controller 'BlockEditorEmbedController', ($scope, $sce, $block) ->
+.controller 'BlockEditorEmbedController', ($scope, $timeout, $sce, $block) ->
     $scope.embeddables = [
         {
             provider: 'youtube'
             displayName: 'YouTube'
-            regex: /https?:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9_-]*)/
+            regex: /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/
         },
         {
             provider: 'soundcloud'
@@ -68,13 +68,15 @@ angular.module 'ngBlockEditor', ['ngSanitize']
         return $sce.trustAsResourceUrl(args.join '')
 
     _update = _.debounce ->
-        if $scope.pattern? and $block.content?.url?
-            $scope.contentId = $scope.pattern.exec($block.content.url)[1]
-            $scope.isValid = $scope.pattern.test($block.content.url)
-        else
-            $scope.contentId = undefined
-            $scope.isValid = no
-    , 1000
+        $timeout ->
+            console.log $block.content.url
+            if $scope.pattern? and $block.content?.url?
+                $scope.contentId = $scope.pattern.exec($block.content.url)[1]
+                $scope.isValid = $scope.pattern.test($block.content.url)
+            else
+                $scope.contentId = undefined
+                $scope.isValid = no
+    , 1000, {leading: yes, trailing: no}
 
     $scope.$watch 'block.content.provider', (provider) ->
         if provider

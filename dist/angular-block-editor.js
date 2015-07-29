@@ -49,13 +49,13 @@
     return this;
   }).controller('BlockEditorTextController', function($scope, $sce) {
     return $scope.trustedHtmlCode = $sce.trustAsHtml;
-  }).controller('BlockEditorEmbedController', function($scope, $sce, $block) {
+  }).controller('BlockEditorEmbedController', function($scope, $timeout, $sce, $block) {
     var _update;
     $scope.embeddables = [
       {
         provider: 'youtube',
         displayName: 'YouTube',
-        regex: /https?:\/\/www.youtube.com\/watch\?v=([a-zA-Z0-9_-]*)/
+        regex: /^(?:https?:\/\/)?(?:www\.)?(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))((\w|-){11})(?:\S+)?$/
       }, {
         provider: 'soundcloud',
         displayName: 'SoundCloud',
@@ -70,15 +70,21 @@
       return $sce.trustAsResourceUrl(args.join(''));
     };
     _update = _.debounce(function() {
-      var ref;
-      if (($scope.pattern != null) && (((ref = $block.content) != null ? ref.url : void 0) != null)) {
-        $scope.contentId = $scope.pattern.exec($block.content.url)[1];
-        return $scope.isValid = $scope.pattern.test($block.content.url);
-      } else {
-        $scope.contentId = void 0;
-        return $scope.isValid = false;
-      }
-    }, 1000);
+      return $timeout(function() {
+        var ref;
+        console.log($block.content.url);
+        if (($scope.pattern != null) && (((ref = $block.content) != null ? ref.url : void 0) != null)) {
+          $scope.contentId = $scope.pattern.exec($block.content.url)[1];
+          return $scope.isValid = $scope.pattern.test($block.content.url);
+        } else {
+          $scope.contentId = void 0;
+          return $scope.isValid = false;
+        }
+      });
+    }, 1000, {
+      leading: true,
+      trailing: false
+    });
     $scope.$watch('block.content.provider', function(provider) {
       if (provider) {
         $scope.pattern = _.findWhere($scope.embeddables, {
