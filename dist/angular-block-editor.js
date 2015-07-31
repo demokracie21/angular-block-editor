@@ -228,6 +228,15 @@
         ngModel.$isEmpty = function(value) {
           return _.isArray(value) && value.length > 0;
         };
+        _.each(BlockEditor.blockTypes, function(blockType) {
+          if (blockType.validator) {
+            return ngModel.$validators[blockType.type] = function(value) {
+              return _(value).filter({
+                kind: blockType.type
+              }).map(blockType.validator).all();
+            };
+          }
+        });
         _toolbar = scope.toolbar || BlockEditor.toolbar;
         scope.blockTypes = _(allBlockTypes).filter(function(bt) {
           return function() {

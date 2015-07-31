@@ -214,6 +214,12 @@ angular.module 'ngBlockEditor', ['ngSanitize']
             ngModel.$isEmpty = (value) ->
                 return _.isArray(value) and value.length > 0
 
+            # Register all type-specific validators.
+            _.each BlockEditor.blockTypes, (blockType) ->
+                if blockType.validator
+                    ngModel.$validators[blockType.type] = (value) ->
+                        _(value).filter({kind: blockType.type}).map(blockType.validator).all()
+
             _toolbar = scope.toolbar or BlockEditor.toolbar
             scope.blockTypes = _(allBlockTypes)
                 .filter (bt) -> -> bt.type in _toolbar
