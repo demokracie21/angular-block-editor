@@ -69,7 +69,6 @@ angular.module 'ngBlockEditor', ['ngSanitize']
 
     _update = _.debounce ->
         $timeout ->
-            console.log $block.content.url
             if $scope.pattern? and $block.content?.url?
                 $scope.contentId = $scope.pattern.exec($block.content.url)[1]
                 $scope.isValid = $scope.pattern.test($block.content.url)
@@ -319,7 +318,6 @@ angular.module 'ngBlockEditor', ['ngSanitize']
             return
 
         if scope.config.renderController?
-            console.log scope.config.renderController
             ctrlLocals =
                 $scope: scope
                 $block: scope.block

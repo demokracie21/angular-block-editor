@@ -72,7 +72,6 @@
     _update = _.debounce(function() {
       return $timeout(function() {
         var ref;
-        console.log($block.content.url);
         if (($scope.pattern != null) && (((ref = $block.content) != null ? ref.url : void 0) != null)) {
           $scope.contentId = $scope.pattern.exec($block.content.url)[1];
           return $scope.isValid = $scope.pattern.test($block.content.url);
@@ -339,7 +338,6 @@
           return;
         }
         if (scope.config.renderController != null) {
-          console.log(scope.config.renderController);
           ctrlLocals = {
             $scope: scope,
             $block: scope.block
