@@ -60,7 +60,6 @@ angular.module 'ngBlockEditor', ['ngSanitize']
             regex: /https?:\/\/(soundcloud.com\/[a-zA-Z0-9\/_-]*)/
         }
     ]
-    $scope.pattern = null
     $scope.isValid = no
 
     $scope.trustedConcat = ->
@@ -69,19 +68,25 @@ angular.module 'ngBlockEditor', ['ngSanitize']
 
     _update = _.debounce ->
         $timeout ->
-            if $scope.pattern? and $block.content?.url?
-                $scope.contentId = $scope.pattern.exec($block.content.url)[1]
-                $scope.isValid = $scope.pattern.test($block.content.url)
-            else
+            if not $block.content?.url?
+                $block.content.provider = undefined
                 $scope.contentId = undefined
                 $scope.isValid = no
+            else
+                service = _.find $scope.embeddables, (e) -> e.regex.test $block.content.url
+
+                if service
+                    $block.content.provider = service.provider
+                    $scope.contentId = service.regex.exec($block.content.url)[1]
+                    $scope.isValid = yes
+                else
+                    $block.content.provider = undefined
+                    $scope.contentId = undefined
+                    $scope.isValid = no
+
     , 1000, {leading: yes, trailing: no}
 
-    $scope.$watch 'block.content.provider', (provider) ->
-        if provider
-            $scope.pattern = _.findWhere($scope.embeddables, provider: provider).regex
-
-        _update()
+    _update()
 
     $scope.$watch 'block.content.url', _update
 

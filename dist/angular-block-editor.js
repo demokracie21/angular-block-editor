@@ -62,7 +62,6 @@
         regex: /https?:\/\/(soundcloud.com\/[a-zA-Z0-9\/_-]*)/
       }
     ];
-    $scope.pattern = null;
     $scope.isValid = false;
     $scope.trustedConcat = function() {
       var args;
@@ -71,27 +70,31 @@
     };
     _update = _.debounce(function() {
       return $timeout(function() {
-        var ref;
-        if (($scope.pattern != null) && (((ref = $block.content) != null ? ref.url : void 0) != null)) {
-          $scope.contentId = $scope.pattern.exec($block.content.url)[1];
-          return $scope.isValid = $scope.pattern.test($block.content.url);
-        } else {
+        var ref, service;
+        if (((ref = $block.content) != null ? ref.url : void 0) == null) {
+          $block.content.provider = void 0;
           $scope.contentId = void 0;
           return $scope.isValid = false;
+        } else {
+          service = _.find($scope.embeddables, function(e) {
+            return e.regex.test($block.content.url);
+          });
+          if (service) {
+            $block.content.provider = service.provider;
+            $scope.contentId = service.regex.exec($block.content.url)[1];
+            return $scope.isValid = true;
+          } else {
+            $block.content.provider = void 0;
+            $scope.contentId = void 0;
+            return $scope.isValid = false;
+          }
         }
       });
     }, 1000, {
       leading: true,
       trailing: false
     });
-    $scope.$watch('block.content.provider', function(provider) {
-      if (provider) {
-        $scope.pattern = _.findWhere($scope.embeddables, {
-          provider: provider
-        }).regex;
-      }
-      return _update();
-    });
+    _update();
     return $scope.$watch('block.content.url', _update);
   }).config(function(BlockEditorProvider) {
     BlockEditorProvider.registerBlockType('text', {
