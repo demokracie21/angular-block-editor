@@ -10,7 +10,7 @@ angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) 
 
 angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
   $templateCache.put('ng-block-editor/edit/embed.html',
-    '<div ng-form="form" class="form-horizontal"><span>Supported services: <strong ng-repeat="e in embeddables">{{ e.displayName }}<span ng-show="! $last">,&nbsp;</span></strong></span><div class="form-group"><label class="col-sm-2 control-label">URL</label><div class="col-sm-10"><input type="url" ng-model="block.content.url" class="form-control" required> <input type="hidden" ng-model="contentId" required><p class="help-block" ng-show="block.content.url && ! isValid">Could not find any service matching provided URL.</p></div></div><div class="form-group"><div class="col-sm-offset-2 col-sm-10"><a href="" class="btn btn-primary btn-sm" ng-click="save()" ng-disabled="! isValid"><i class="glyphicon glyphicon-ok"></i> &nbsp;Done</a> <a href="" class="btn btn-link btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i> &nbsp;Cancel</a></div></div></div>');
+    '<div ng-form="form" class="form-horizontal"><span>Supported services: <strong ng-repeat="e in embeddables">{{ e.displayName }}<span ng-show="! $last">,&nbsp;</span></strong></span><div class="form-group"><label class="col-sm-2 control-label">URL</label><div class="col-sm-10"><input type="url" ng-model="data.url" class="form-control" required> <input type="hidden" ng-model="block.content.url" required><p class="help-block" ng-show="block.content.url && ! data.isValid">Could not find any service matching provided URL.</p></div></div><div class="form-group"><div class="col-sm-offset-2 col-sm-10"><a href="" class="btn btn-primary btn-sm" ng-click="save()" ng-disabled="! data.isValid"><i class="glyphicon glyphicon-ok"></i> &nbsp;Done</a> <a href="" class="btn btn-link btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i> &nbsp;Cancel</a></div></div></div>');
 }]);
 
 angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
@@ -25,7 +25,7 @@ angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) 
 
 angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
   $templateCache.put('ng-block-editor/preview/embed.html',
-    '<ng-include ng-if="isValid" src="\'ng-block-editor/preview/embed/\' + block.content.provider + \'.html\'"></ng-include>');
+    '<ng-include ng-if="data.isValid" src="\'ng-block-editor/preview/embed/\' + block.content.provider + \'.html\'"></ng-include>');
 }]);
 
 angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
@@ -40,10 +40,10 @@ angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) 
 
 angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
   $templateCache.put('ng-block-editor/preview/embed/soundcloud.html',
-    '<iframe width="100%" height="450" scrolling="no" frameborder="no" src="{{ trustedConcat(\'https://w.soundcloud.com/player/?url=https://\', contentId, \'&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true\') }}"></iframe>');
+    '<iframe width="100%" height="450" scrolling="no" frameborder="no" src="{{ trustedConcat(\'https://w.soundcloud.com/player/?url=https://\', data.contentId, \'&amp;auto_play=false&amp;hide_related=false&amp;show_comments=true&amp;show_user=true&amp;show_reposts=false&amp;visual=true\') }}"></iframe>');
 }]);
 
 angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
   $templateCache.put('ng-block-editor/preview/embed/youtube.html',
-    '<iframe width="100%" height="450" src="{{ trustedConcat(\'https://www.youtube.com/embed/\', contentId) }}"></iframe>');
+    '<iframe width="100%" height="450" src="{{ trustedConcat(\'https://www.youtube.com/embed/\', data.contentId) }}"></iframe>');
 }]);

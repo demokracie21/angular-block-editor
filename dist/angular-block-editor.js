@@ -50,7 +50,7 @@
   }).controller('BlockEditorTextController', function($scope, $sce) {
     return $scope.trustedHtmlCode = $sce.trustAsHtml;
   }).controller('BlockEditorEmbedController', function($scope, $timeout, $sce, $block) {
-    var _update;
+    var _update, ref;
     $scope.embeddables = [
       {
         provider: 'youtube',
@@ -62,31 +62,38 @@
         regex: /https?:\/\/(soundcloud.com\/[a-zA-Z0-9\/_-]*)/
       }
     ];
-    $scope.isValid = false;
+    $scope.data = {
+      url: '',
+      isValid: false,
+      contentId: void 0
+    };
     $scope.trustedConcat = function() {
       var args;
       args = Array.prototype.slice.call(arguments);
       return $sce.trustAsResourceUrl(args.join(''));
     };
-    _update = _.debounce(function() {
+    _update = _.debounce(function(url) {
       return $timeout(function() {
-        var ref, service;
-        if (((ref = $block.content) != null ? ref.url : void 0) == null) {
-          $block.content.provider = void 0;
-          $scope.contentId = void 0;
-          return $scope.isValid = false;
+        var service;
+        if (url == null) {
+          delete $block.content.provider;
+          delete $block.content.url;
+          $scope.data.contentId = void 0;
+          return $scope.data.isValid = false;
         } else {
           service = _.find($scope.embeddables, function(e) {
-            return e.regex.test($block.content.url);
+            return e.regex.test(url);
           });
           if (service) {
             $block.content.provider = service.provider;
-            $scope.contentId = service.regex.exec($block.content.url)[1];
-            return $scope.isValid = true;
+            $block.content.url = url;
+            $scope.data.contentId = service.regex.exec(url)[1];
+            return $scope.data.isValid = true;
           } else {
-            $block.content.provider = void 0;
-            $scope.contentId = void 0;
-            return $scope.isValid = false;
+            delete $block.content.provider;
+            delete $block.content.url;
+            $scope.data.contentId = void 0;
+            return $scope.data.isValid = false;
           }
         }
       });
@@ -94,8 +101,12 @@
       leading: true,
       trailing: false
     });
-    _update();
-    return $scope.$watch('block.content.url', _update);
+    if (((ref = $block.content) != null ? ref.url : void 0) != null) {
+      _update($block.content.url);
+    } else {
+      _update('');
+    }
+    return $scope.$watch('data.url', _update);
   }).config(function(BlockEditorProvider) {
     BlockEditorProvider.registerBlockType('text', {
       icon: 'glyphicon glyphicon-align-justify',

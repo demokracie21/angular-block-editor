@@ -60,35 +60,44 @@ angular.module 'ngBlockEditor', ['ngSanitize']
             regex: /https?:\/\/(soundcloud.com\/[a-zA-Z0-9\/_-]*)/
         }
     ]
-    $scope.isValid = no
+    $scope.data =
+        url: ''
+        isValid: no
+        contentId: undefined
 
     $scope.trustedConcat = ->
         args = Array.prototype.slice.call arguments
         return $sce.trustAsResourceUrl(args.join '')
 
-    _update = _.debounce ->
+    _update = _.debounce (url) ->
         $timeout ->
-            if not $block.content?.url?
-                $block.content.provider = undefined
-                $scope.contentId = undefined
-                $scope.isValid = no
+            if not url?
+                delete $block.content.provider
+                delete $block.content.url
+                $scope.data.contentId = undefined
+                $scope.data.isValid = no
             else
-                service = _.find $scope.embeddables, (e) -> e.regex.test $block.content.url
+                service = _.find $scope.embeddables, (e) -> e.regex.test url
 
                 if service
                     $block.content.provider = service.provider
-                    $scope.contentId = service.regex.exec($block.content.url)[1]
-                    $scope.isValid = yes
+                    $block.content.url = url
+                    $scope.data.contentId = service.regex.exec(url)[1]
+                    $scope.data.isValid = yes
                 else
-                    $block.content.provider = undefined
-                    $scope.contentId = undefined
-                    $scope.isValid = no
+                    delete $block.content.provider
+                    delete $block.content.url
+                    $scope.data.contentId = undefined
+                    $scope.data.isValid = no
 
     , 1000, {leading: yes, trailing: no}
 
-    _update()
+    if $block.content?.url?
+        _update $block.content.url
+    else
+        _update ''
 
-    $scope.$watch 'block.content.url', _update
+    $scope.$watch 'data.url', _update
 
 
 .config (BlockEditorProvider) ->
