@@ -43,10 +43,6 @@ angular.module 'ngBlockEditor', ['ngSanitize']
     return @
 
 
-.controller 'BlockEditorTextController', ($scope, $sce) ->
-    $scope.trustedHtmlCode = $sce.trustAsHtml
-
-
 .controller 'BlockEditorEmbedController', ($scope, $timeout, $sce, $block) ->
     $scope.embeddables = [
         {
@@ -106,8 +102,6 @@ angular.module 'ngBlockEditor', ['ngSanitize']
         displayName: 'Text'
         editTemplate: 'ng-block-editor/edit/text.html'
         previewTemplate: 'ng-block-editor/preview/text.html'
-        editController: 'BlockEditorTextController'
-        renderController: 'BlockEditorTextController'
 
     BlockEditorProvider.registerBlockType 'link',
         icon: 'glyphicon glyphicon-link'
