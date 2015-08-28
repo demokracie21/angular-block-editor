@@ -47,8 +47,6 @@
       }
     ];
     return this;
-  }).controller('BlockEditorTextController', function($scope, $sce) {
-    return $scope.trustedHtmlCode = $sce.trustAsHtml;
   }).controller('BlockEditorEmbedController', function($scope, $timeout, $sce, $block) {
     var _update, ref;
     $scope.embeddables = [
@@ -88,7 +86,8 @@
             $block.content.provider = service.provider;
             $block.content.url = url;
             $scope.data.contentId = service.regex.exec(url)[1];
-            return $scope.data.isValid = true;
+            $scope.data.isValid = true;
+            return $scope.data.url = url;
           } else {
             delete $block.content.provider;
             delete $block.content.url;
@@ -112,9 +111,7 @@
       icon: 'glyphicon glyphicon-align-justify',
       displayName: 'Text',
       editTemplate: 'ng-block-editor/edit/text.html',
-      previewTemplate: 'ng-block-editor/preview/text.html',
-      editController: 'BlockEditorTextController',
-      renderController: 'BlockEditorTextController'
+      previewTemplate: 'ng-block-editor/preview/text.html'
     });
     BlockEditorProvider.registerBlockType('link', {
       icon: 'glyphicon glyphicon-link',

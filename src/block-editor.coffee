@@ -80,6 +80,7 @@ angular.module 'ngBlockEditor', ['ngSanitize']
                     $block.content.url = url
                     $scope.data.contentId = service.regex.exec(url)[1]
                     $scope.data.isValid = yes
+                    $scope.data.url = url
                 else
                     delete $block.content.provider
                     delete $block.content.url
