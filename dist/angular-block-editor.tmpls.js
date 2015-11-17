@@ -35,7 +35,7 @@ angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) 
 
 angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
   $templateCache.put('ng-block-editor/preview/text.html',
-    '<div ng-bind-html="trustedHtmlCode(block.content.html)"></div>');
+    '<div ng-bind-html="block.content.html"></div>');
 }]);
 
 angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {

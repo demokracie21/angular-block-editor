@@ -55,8 +55,8 @@ gulp.task 'coffee', ->
         .pipe(handleErrors())
         .pipe(cache('coffee')) # only pass through changed files
         # .pipe(if config.NODE_ENV != 'production' then sourcemaps.init() else utils.noop())
-        .pipe(coffee())
-        .pipe(if config.NODE_ENV == 'production' then ngAnnotate() else utils.noop())
+        .pipe coffee()
+        .pipe ngAnnotate()
         .pipe(if config.NODE_ENV == 'production' then uglify() else utils.noop())
         .pipe(remember('coffee')) # add back all files to the stream
         # .pipe(if config.NODE_ENV != 'production' then sourcemaps.write() else utils.noop())

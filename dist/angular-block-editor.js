@@ -47,9 +47,7 @@
       }
     ];
     return this;
-  }).controller('BlockEditorTextController', function($scope, $sce) {
-    return $scope.trustedHtmlCode = $sce.trustAsHtml;
-  }).controller('BlockEditorEmbedController', function($scope, $timeout, $sce, $block) {
+  }).controller('BlockEditorEmbedController', ["$scope", "$timeout", "$sce", "$block", function($scope, $timeout, $sce, $block) {
     var _update, ref;
     $scope.embeddables = [
       {
@@ -107,14 +105,12 @@
       _update('');
     }
     return $scope.$watch('data.url', _update);
-  }).config(function(BlockEditorProvider) {
+  }]).config(["BlockEditorProvider", function(BlockEditorProvider) {
     BlockEditorProvider.registerBlockType('text', {
       icon: 'glyphicon glyphicon-align-justify',
       displayName: 'Text',
       editTemplate: 'ng-block-editor/edit/text.html',
-      previewTemplate: 'ng-block-editor/preview/text.html',
-      editController: 'BlockEditorTextController',
-      renderController: 'BlockEditorTextController'
+      previewTemplate: 'ng-block-editor/preview/text.html'
     });
     BlockEditorProvider.registerBlockType('link', {
       icon: 'glyphicon glyphicon-link',
@@ -131,7 +127,7 @@
       renderController: 'BlockEditorEmbedController'
     });
     return BlockEditorProvider.toolbar = ['text', 'link', 'embed'];
-  }).directive('beEditor', function(BlockEditor) {
+  }]).directive('beEditor', ["BlockEditor", function(BlockEditor) {
     var allBlockTypes;
     allBlockTypes = BlockEditor.blockTypes;
     return {
@@ -143,7 +139,7 @@
         ngModel: '=ngModel',
         ngDisabled: '='
       },
-      controller: function($scope) {
+      controller: ["$scope", function($scope) {
         var _rollbackStorage, updateMovementToggles;
         _rollbackStorage = {};
         updateMovementToggles = function() {
@@ -213,7 +209,7 @@
         return this.isEditing = function() {
           return $scope.editing;
         };
-      },
+      }],
       link: function(scope, element, attrs, controllers) {
         var _id, _toolbar, controller, ngModel;
         controller = controllers[0];
@@ -285,7 +281,7 @@
         }, true);
       }
     };
-  }).directive('beBlock', function($window, $log, $controller, BlockEditor) {
+  }]).directive('beBlock', ["$window", "$log", "$controller", "BlockEditor", function($window, $log, $controller, BlockEditor) {
     return {
       restrict: 'E',
       templateUrl: BlockEditor.blockTemplateUrl,
@@ -333,7 +329,7 @@
         }
       }
     };
-  }).directive('beRender', function() {
+  }]).directive('beRender', function() {
     return {
       restrict: 'EA',
       template: '<div be-render-block="block" ng-repeat="block in blocks"></div>',
@@ -344,7 +340,7 @@
         return element.addClass('be-render');
       }
     };
-  }).directive('beRenderBlock', function($log, $controller, BlockEditor) {
+  }).directive('beRenderBlock', ["$log", "$controller", "BlockEditor", function($log, $controller, BlockEditor) {
     return {
       restrict: 'EA',
       template: '<div ng-include="config.previewTemplate"></div>',
@@ -369,6 +365,6 @@
         }
       }
     };
-  });
+  }]);
 
 }).call(this);
