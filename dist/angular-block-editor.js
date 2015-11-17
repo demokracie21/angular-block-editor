@@ -86,7 +86,8 @@
             $block.content.provider = service.provider;
             $block.content.url = url;
             $scope.data.contentId = service.regex.exec(url)[1];
-            return $scope.data.isValid = true;
+            $scope.data.isValid = true;
+            return $scope.data.url = url;
           } else {
             delete $block.content.provider;
             delete $block.content.url;
