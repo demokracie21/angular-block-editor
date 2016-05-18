@@ -2,7 +2,7 @@
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
   angular.module('ngBlockEditor', ['ngSanitize']).provider('BlockEditor', function() {
-    var e, self;
+    var e, error, self;
     this.blockTypes = {};
     this.editorTemplateUrl = 'ng-block-editor/editor.html';
     this.blockTemplateUrl = 'ng-block-editor/block.html';
@@ -14,8 +14,8 @@
     try {
       angular.module('angular-sortable-view');
       this.dragAndDropEnabled = true;
-    } catch (_error) {
-      e = _error;
+    } catch (error) {
+      e = error;
       this.dragAndDropEnabled = false;
     }
     this.registerBlockType = function(id, config) {
