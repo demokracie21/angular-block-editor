@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npm run karma",
-    "karma": "NODE_ENV=test gulp karma",
-    "postinstall": "bower install && gulp build"
+    "karma": "NODE_ENV=test gulp karma"
   },
   "repository": {
     "type": "git",
