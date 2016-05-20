@@ -1,6 +1,6 @@
 {
   "name": "angular-block-editor",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Block-based content editor for AngularJS for consistent and styleable content editing.",
   "main": "index.js",
   "scripts": {
