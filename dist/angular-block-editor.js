@@ -1,7 +1,7 @@
 (function() {
   var indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-  angular.module('ngBlockEditor', ['ngSanitize']).provider('BlockEditor', function() {
+  angular.module('ngBlockEditor', []).provider('BlockEditor', function() {
     var e, error, self;
     this.blockTypes = {};
     this.editorTemplateUrl = 'ng-block-editor/editor.html';

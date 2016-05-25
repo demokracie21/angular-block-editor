@@ -60,5 +60,6 @@
     "mocha": "^2.1.0",
     "node-notifier": "^4.0.3",
     "should": "^4.6.1"
-  }
+  },
+  "dependencies": {}
 }

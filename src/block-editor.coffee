@@ -1,4 +1,4 @@
-angular.module 'ngBlockEditor', ['ngSanitize']
+angular.module 'ngBlockEditor', []
 
 .provider 'BlockEditor', ->
     @blockTypes = {}
