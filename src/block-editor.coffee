@@ -87,7 +87,7 @@ angular.module 'ngBlockEditor', []
                     $scope.data.contentId = undefined
                     $scope.data.isValid = no
 
-    , 1000, {leading: yes, trailing: no}
+    , 500, {leading: yes, trailing: no}
 
     if $block.content?.url?
         _update $block.content.url

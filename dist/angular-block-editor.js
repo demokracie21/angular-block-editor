@@ -96,7 +96,7 @@
           }
         }
       });
-    }, 1000, {
+    }, 500, {
       leading: true,
       trailing: false
     });
