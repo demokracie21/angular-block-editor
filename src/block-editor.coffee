@@ -62,6 +62,7 @@ angular.module 'ngBlockEditor', []
         contentId: undefined
 
     $scope.trustedConcat = ->
+        # The regular expressions protect us from XSS.
         args = Array.prototype.slice.call arguments
         return $sce.trustAsResourceUrl(args.join '')
 
