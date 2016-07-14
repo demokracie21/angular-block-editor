@@ -9,21 +9,6 @@ angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) 
 }]);
 
 angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
-  $templateCache.put('ng-block-editor/edit/embed.html',
-    '<div ng-form="form" class="form-horizontal"><span>Supported services: <strong ng-repeat="e in embeddables">{{ e.displayName }}<span ng-show="! $last">,&nbsp;</span></strong></span><div class="form-group"><label class="col-sm-2 control-label">URL</label><div class="col-sm-10"><input type="url" ng-model="data.url" class="form-control" required> <input type="hidden" ng-model="block.content.url" required><p class="help-block" ng-show="block.content.url && ! data.isValid">Could not find any service matching provided URL.</p></div></div><div class="form-group"><div class="col-sm-offset-2 col-sm-10"><a href="" class="btn btn-primary btn-sm" ng-click="save()" ng-disabled="! data.isValid"><i class="glyphicon glyphicon-ok"></i> &nbsp;Done</a> <a href="" class="btn btn-link btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i> &nbsp;Cancel</a></div></div></div>');
-}]);
-
-angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
-  $templateCache.put('ng-block-editor/edit/link.html',
-    '<div ng-form="form" class="form-horizontal"><div class="form-group"><label class="col-sm-2 control-label">Label</label><div class="col-sm-10"><input type="text" class="form-control" ng-model="block.content.label"></div></div><div class="form-group"><label class="col-sm-2 control-label">URL</label><div class="col-sm-10"><input type="url" class="form-control" ng-model="block.content.url" required></div></div><div class="form-group"><div class="col-sm-offset-2 col-sm-10"><a href="" class="btn btn-primary btn-sm" ng-click="save()" ng-disabled="form.$invalid"><i class="glyphicon glyphicon-ok"></i> &nbsp;Done</a> <a href="" class="btn btn-link btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i> &nbsp;Cancel</a></div></div></div>');
-}]);
-
-angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
-  $templateCache.put('ng-block-editor/edit/text.html',
-    '<div ng-form="form" class="form-horizontal"><div class="form-group"><label class="col-sm-2 control-label">Text</label><div class="col-sm-10"><textarea class="form-control" ng-model="block.content.html" required></textarea></div></div><div class="form-group"><div class="col-sm-offset-2 col-sm-10"><a href="" class="btn btn-primary btn-sm" ng-click="save()" ng-disabled="form.$invalid"><i class="glyphicon glyphicon-ok"></i> &nbsp;Done</a> <a href="" class="btn btn-link btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i> &nbsp;Cancel</a></div></div></div>');
-}]);
-
-angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
   $templateCache.put('ng-block-editor/preview/embed.html',
     '<ng-include ng-if="data.isValid" src="\'ng-block-editor/preview/embed/\' + block.content.provider + \'.html\'"></ng-include>');
 }]);
@@ -36,6 +21,21 @@ angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) 
 angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
   $templateCache.put('ng-block-editor/preview/text.html',
     '<div ng-bind-html="block.content.html"></div>');
+}]);
+
+angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
+  $templateCache.put('ng-block-editor/edit/embed.html',
+    '<div ng-form="form" class="form-horizontal"><span>Supported services: <strong ng-repeat="e in embeddables">{{ e.displayName }}<span ng-show="! $last">,&nbsp;</span></strong></span><div class="form-group"><label class="col-sm-2 control-label">URL</label><div class="col-sm-10"><input type="url" ng-model="data.url" class="form-control" required> <input type="hidden" ng-model="block.content.url" required><p class="help-block" ng-show="block.content.url && ! data.isValid">Could not find any service matching provided URL.</p></div></div><div class="form-group"><div class="col-sm-offset-2 col-sm-10"><a href="" class="btn btn-primary btn-sm" ng-click="save()" ng-disabled="! data.isValid"><i class="glyphicon glyphicon-ok"></i> &nbsp;Done</a> <a href="" class="btn btn-link btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i> &nbsp;Cancel</a></div></div></div>');
+}]);
+
+angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
+  $templateCache.put('ng-block-editor/edit/link.html',
+    '<div ng-form="form" class="form-horizontal"><div class="form-group"><label class="col-sm-2 control-label">Label</label><div class="col-sm-10"><input type="text" class="form-control" ng-model="block.content.label"></div></div><div class="form-group"><label class="col-sm-2 control-label">URL</label><div class="col-sm-10"><input type="url" class="form-control" ng-model="block.content.url" required></div></div><div class="form-group"><div class="col-sm-offset-2 col-sm-10"><a href="" class="btn btn-primary btn-sm" ng-click="save()" ng-disabled="form.$invalid"><i class="glyphicon glyphicon-ok"></i> &nbsp;Done</a> <a href="" class="btn btn-link btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i> &nbsp;Cancel</a></div></div></div>');
+}]);
+
+angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {
+  $templateCache.put('ng-block-editor/edit/text.html',
+    '<div ng-form="form" class="form-horizontal"><div class="form-group"><label class="col-sm-2 control-label">Text</label><div class="col-sm-10"><textarea class="form-control" ng-model="block.content.html" required></textarea></div></div><div class="form-group"><div class="col-sm-offset-2 col-sm-10"><a href="" class="btn btn-primary btn-sm" ng-click="save()" ng-disabled="form.$invalid"><i class="glyphicon glyphicon-ok"></i> &nbsp;Done</a> <a href="" class="btn btn-link btn-sm" ng-click="cancel()"><i class="glyphicon glyphicon-remove"></i> &nbsp;Cancel</a></div></div></div>');
 }]);
 
 angular.module('ngBlockEditor').run(['$templateCache', function($templateCache) {

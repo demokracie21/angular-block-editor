@@ -97,6 +97,18 @@ angular.module 'ngBlockEditor', []
 
     $scope.$watch 'data.url', _update
 
+.controller 'BlockEditorLinkController', ($scope, $timeout, $block) ->
+    sanitize = (url) ->
+        if not (new RegExp(/https?:\/\//)).test(url)
+            return 'http://' + (url || '')
+        return url
+
+    $block.content.url = sanitize $block.content?.url
+
+    return {
+        preSaveHook: () ->
+            $block.content.url = sanitize $block.content?.url
+    }
 
 .config (BlockEditorProvider) ->
     BlockEditorProvider.registerBlockType 'text',
@@ -110,6 +122,7 @@ angular.module 'ngBlockEditor', []
         displayName: 'Link'
         editTemplate: 'ng-block-editor/edit/link.html'
         previewTemplate: 'ng-block-editor/preview/link.html'
+        editController: 'BlockEditorLinkController'
 
     BlockEditorProvider.registerBlockType 'embed',
         icon: 'glyphicon glyphicon-facetime-video'
@@ -282,6 +295,13 @@ angular.module 'ngBlockEditor', []
             $log.error "[ngBlockEditor] Unknown block type: #{scope.block.kind}"
             return
 
+        if scope.config.editController?
+            ctrlLocals =
+                $scope: scope
+                $block: scope.block
+                $editor: blockEditor
+            ctrlInstance = $controller scope.config.editController, ctrlLocals
+
         scope.edit = ->
             blockEditor.editBlock scope.block
 
@@ -296,17 +316,12 @@ angular.module 'ngBlockEditor', []
             blockEditor.moveDown scope.block
 
         scope.save = ->
+            if ctrlInstance.preSaveHook
+                ctrlInstance.preSaveHook()
             blockEditor.submitBlockEdit scope.block
 
         scope.cancel = ->
             blockEditor.rollbackBlockEdit scope.block
-
-        if scope.config.editController?
-            ctrlLocals =
-                $scope: scope
-                $block: scope.block
-                $editor: blockEditor
-            ctrlInstance = $controller scope.config.editController, ctrlLocals
 
 
 .directive 'beRender', ->

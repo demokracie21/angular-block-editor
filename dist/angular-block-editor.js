@@ -106,6 +106,21 @@
       _update('');
     }
     return $scope.$watch('data.url', _update);
+  }]).controller('BlockEditorLinkController', ["$scope", "$timeout", "$block", function($scope, $timeout, $block) {
+    var ref, sanitize;
+    sanitize = function(url) {
+      if (!(new RegExp(/https?:\/\//)).test(url)) {
+        return 'http://' + (url || '');
+      }
+      return url;
+    };
+    $block.content.url = sanitize((ref = $block.content) != null ? ref.url : void 0);
+    return {
+      preSaveHook: function() {
+        var ref1;
+        return $block.content.url = sanitize((ref1 = $block.content) != null ? ref1.url : void 0);
+      }
+    };
   }]).config(["BlockEditorProvider", function(BlockEditorProvider) {
     BlockEditorProvider.registerBlockType('text', {
       icon: 'glyphicon glyphicon-align-justify',
@@ -117,7 +132,8 @@
       icon: 'glyphicon glyphicon-link',
       displayName: 'Link',
       editTemplate: 'ng-block-editor/edit/link.html',
-      previewTemplate: 'ng-block-editor/preview/link.html'
+      previewTemplate: 'ng-block-editor/preview/link.html',
+      editController: 'BlockEditorLinkController'
     });
     BlockEditorProvider.registerBlockType('embed', {
       icon: 'glyphicon glyphicon-facetime-video',
@@ -300,6 +316,14 @@
           $log.error("[ngBlockEditor] Unknown block type: " + scope.block.kind);
           return;
         }
+        if (scope.config.editController != null) {
+          ctrlLocals = {
+            $scope: scope,
+            $block: scope.block,
+            $editor: blockEditor
+          };
+          ctrlInstance = $controller(scope.config.editController, ctrlLocals);
+        }
         scope.edit = function() {
           return blockEditor.editBlock(scope.block);
         };
@@ -315,19 +339,14 @@
           return blockEditor.moveDown(scope.block);
         };
         scope.save = function() {
+          if (ctrlInstance.preSaveHook) {
+            ctrlInstance.preSaveHook();
+          }
           return blockEditor.submitBlockEdit(scope.block);
         };
-        scope.cancel = function() {
+        return scope.cancel = function() {
           return blockEditor.rollbackBlockEdit(scope.block);
         };
-        if (scope.config.editController != null) {
-          ctrlLocals = {
-            $scope: scope,
-            $block: scope.block,
-            $editor: blockEditor
-          };
-          return ctrlInstance = $controller(scope.config.editController, ctrlLocals);
-        }
       }
     };
   }]).directive('beRender', function() {
