@@ -339,7 +339,7 @@
           return blockEditor.moveDown(scope.block);
         };
         scope.save = function() {
-          if (ctrlInstance.preSaveHook) {
+          if (ctrlInstance != null ? ctrlInstance.preSaveHook : void 0) {
             ctrlInstance.preSaveHook();
           }
           return blockEditor.submitBlockEdit(scope.block);

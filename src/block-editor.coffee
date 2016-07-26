@@ -316,7 +316,7 @@ angular.module 'ngBlockEditor', []
             blockEditor.moveDown scope.block
 
         scope.save = ->
-            if ctrlInstance.preSaveHook
+            if ctrlInstance?.preSaveHook
                 ctrlInstance.preSaveHook()
             blockEditor.submitBlockEdit scope.block
 
