@@ -4,7 +4,7 @@ Extensible block editor component for AngularJS.
 
 It is built using:
 
-* [Angular](https://angular.io/) - browser js framework
+* [AngularJS](https://angularjs.org/) - browser js framework
 * [Less](http://lesscss.org/) - CSS preprocessor
 * [NodeJS](nodejs.org)/[npm](npmjs.com) - server side javascript / nodejs packaging system
 
